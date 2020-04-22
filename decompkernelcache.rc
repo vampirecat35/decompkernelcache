@@ -1,0 +1,52 @@
+//
+// LZVN/LZSS prelinked kerne/kernelcache decompressor
+// Windows -> WIN32 and WIN64 PE resource (.rsrc) file
+//
+#include <windows.h>
+//
+#define IDI_MAINICON 100
+#define IDI_MANIFEST 1
+//
+// 
+//
+IDI_MANIFEST		RT_MANIFEST             "rtmanifest.xml"
+//
+1                       WEVT_TEMPLATE           "WEVT_EN_US.bin"
+//
+mainicon ICON DISCARDABLE "decompkernelcache.ico"
+//
+IDI_MAINICON		ICON 		"decompkernelcache.ico"
+VS_VERSION_INFO		VERSIONINFO
+FILEVERSION		2,2,0,0
+PRODUCTVERSION    	2,2,0,0
+FILEFLAGSMASK		VS_FFI_FILEFLAGSMASK
+#ifdef _DEBUG
+FILEFLAGS		1
+#else /* NDEBUG */
+FILEFLAGS		0
+#endif /* _DEBUG */
+FILEOS			VOS_NT_WINDOWS32
+FILETYPE		VFT_APP //
+FILESUBTYPE		0	// not used
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "FileDescription",	"AnV LZVN/LZSS prelinked kernel/kernelcache decompressor (Windows)\0"
+      VALUE "CompanyName", "AnV Software"
+      VALUE "FileVersion",	"2.2\0"
+      VALUE "InternalName",	"decompkernelcache.exe\0"
+      VALUE "LegalCopyright",	"(C) 2014-2020 AnV Software, all rights reserved\0"
+      VALUE "OriginalFilename",	"decompkernelcache.exe\0"
+      VALUE "ProductName",	"decompkernelcache\0"
+      VALUE "ProductVersion",	"2.2\0"
+      VALUE "Comments",		"For more information visit InsanelyMac (https://www.insanelymac.com/forum/topic/340419-decompkernelcache-22-kernel-cache-extraction-tool-for-macosx-and-windows-32-and-64-bit)\0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0409, 0x04E4
+  END
+END
+

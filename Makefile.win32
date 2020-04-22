@@ -1,0 +1,62 @@
+##
+#
+# AnV LZVN/LZSS kernel cache decompressor V1.0
+#
+# Intel 64-bit (WIN32) version
+#
+##
+
+PREFIX=/usr
+LIBPREFIX=WINSUP32
+
+NASM=nasm
+CC=gcc -I"$(LIBPREFIX)/include"
+YACC=bison -y
+WINDRES=windres
+AR=ar
+RANLIB=ranlib
+LIBS=-L. -llzvn -L"$(LIBPREFIX)/lib" -lCoreFoundation
+INSTALL=install
+ARFLAGS=cru
+CFLAGS=-Os
+ASFLAGS=$(CFLAGS)
+
+all: decompkernelcache.exe
+
+# .asm.o:
+#	$(NASM) -o $@ -f macho64 $<
+
+# .s.o:
+#	$(CC) $(ASFLAGS) -c $< -o $@
+
+# .S.o:
+#	$(CC) $(ASFLAGS) -c $< -o $@
+
+.c.o:
+	$(CC) $(CFLAGS) -c $< -o $@
+
+IOCFUnserialize.c: IOCFUnserialize.yacc
+	$(YACC) -o $@ $<
+
+decompkernelcacheres.o: decompkernelcache.rc
+	$(WINDRES) -o $@ $<
+
+lzvndec.o: lzvndec.c
+lzvn_size.o: lzvn_size.c
+lzvn_encode.o: lzvn_encode.c
+IOCFUnserialize.o: IOCFUnserialize.c
+
+liblzvn.a: lzvndec.o lzvn_size.o lzvn_encode.o
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) liblzvn.a
+
+decompkernelcache.exe: decompkernelcache.o decompkernelcacheres.o IOCFUnserialize.o liblzvn.a
+	$(CC) $(CFLAGS) -o $@ decompkernelcache.o decompkernelcacheres.o IOCFUnserialize.o $(LIBS)
+
+clean:
+	rm -f *.o IOCFUnserialize.c liblzvn.a decompkernelcache.exe
+
+install: decompkernelcache.exe lzvn.h liblzvn.a
+	$(INSTALL) decompkernelcache.exe $(PREFIX)/bin
+	$(INSTALL) liblzvn.a $(PREFIX)/lib
+	$(INSTALL) lzvn.h $(PREFIX)/include
