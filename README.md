@@ -1,7 +1,7 @@
 decompkernelcache
 ===============
 
-Mac OS X prelinked kernel compressor/decompressor/extractor  (V2.2s)
+Mac OS X prelinked kernel compressor/decompressor/extractor  (V2.2)
 
 - Currently implemented: Decompression and extraction of LZVN/LZSS kernel cache
 
@@ -14,3 +14,4 @@ Mac OS X prelinked kernel compressor/decompressor/extractor  (V2.2s)
 - TODO:
 * Compression of LZVN/LZSS kernel cache
 * Adding kexts to kernel cache
+* Update Visual Studio project
