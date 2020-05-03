@@ -24,7 +24,7 @@
 
 #if defined(__APPLE__) && defined(__MACH__)
 #include <libkern/OSByteOrder.h>
-#elif defined(__GNUC__) || defined(__clang__)
+#elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(__x86_64__))
 inline uint32_t OSSwapInt32(uint32_t data)
 {
     __asm__ ("bswap   %0" : "+r" (data));

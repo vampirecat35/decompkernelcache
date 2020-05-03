@@ -1,0 +1,65 @@
+##
+#
+# AnV LZVN/LZSS kernel cache decompressor V1.0
+#
+# Android version (ARMV7)
+#
+##
+
+PREFIX=/usr/local
+LIBPREFIX=AndroidARM
+CPU=$(shell uname -m)
+PLATFORM=darwin
+ANDROID_CPU=arm
+ANDROID_VERSION=23
+ANDROID_NDK_PATH=$(HOME)/Downloads/android-ndk-r21b
+ANDROID_TOOLCHAIN_DIR=$(ANDROID_NDK_PATH)/toolchains/llvm/prebuilt/$(PLATFORM)-$(CPU)/bin
+SYSROOT_DIR=$(ANDROID_NDK_PATH)/toolchains/llvm/prebuilt/$(PLATFORM)-$(CPU)/sysroot/usr
+
+NASM=nasm
+CC=$(ANDROID_TOOLCHAIN_DIR)/armv7a-linux-androideabi$(ANDROID_VERSION)-clang -I$(SYSROOT_DIR)/include -I$(SYSROOT_DIR)/include/$(ANDROID_CPU)-linux-androideabi -I$(LIBPREFIX)/include
+YACC=$(LIBPREFIX)/bin/bison -y
+AR=$(ANDROID_TOOLCHAIN_DIR)/$(ANDROID_CPU)-linux-androideabi-ar
+RANLIB=$(ANDROID_TOOLCHAIN_DIR)/$(ANDROID_CPU)-linux-androideabi-ranlib
+LIBS=-L. -llzvn -L"$(LIBPREFIX)/lib" -L"$(SYSROOT_DIR)/lib/$(ANDROID_CPU)-linux-androideabi/$(ANDROID_VERSION)" -lCoreFoundation -licuuc -licudata -licui18n -lBlocksRuntime -ldispatch -lstdc++ -lkqueue -lc -lm -lcompiler_rt-extras
+INSTALL=install
+ARFLAGS=cru
+CFLAGS=-Os
+ASFLAGS=$(CFLAGS)
+
+all: decompkernelcache
+
+# .asm.o:
+#	$(NASM) -o $@ -f macho64 $<
+
+# .s.o:
+#	$(CC) $(ASFLAGS) -c $< -o $@
+
+# .S.o:
+#	$(CC) $(ASFLAGS) -c $< -o $@
+
+.c.o:
+	$(CC) $(CFLAGS) -c $< -o $@
+
+IOCFUnserialize.c: IOCFUnserialize.yacc
+	$(YACC) -o $@ $<
+
+lzvndec.o: lzvndec.c
+lzvn_size.o: lzvn_size.c
+lzvn_encode.o: lzvn_encode.c
+IOCFUnserialize.o: IOCFUnserialize.c
+
+liblzvn.a: lzvndec.o lzvn_size.o lzvn_encode.o
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) liblzvn.a
+
+decompkernelcache: decompkernelcache.o IOCFUnserialize.o liblzvn.a
+	$(CC) $(CFLAGS) -o $@ decompkernelcache.o IOCFUnserialize.o $(LIBS)
+
+clean:
+	rm -f *.o IOCFUnserialize.c liblzvn.a decompkernelcache
+
+install: decompkernelcache lzvn.h liblzvn.a
+	$(INSTALL) decompkernelcache $(PREFIX)/bin
+	$(INSTALL) liblzvn.a $(PREFIX)/lib
+	$(INSTALL) lzvn.h $(PREFIX)/include

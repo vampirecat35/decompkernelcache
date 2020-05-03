@@ -14,6 +14,7 @@ Mac OS X prelinked kernel compressor/decompressor/extractor  (V2.2)
 * Added iOS ARMV7 and ARM64 support
 * Added WatchOS ARMV7K and ARM64_32 support
 * Added AppleTVOS ARM64 support
+* Added Android support
 
 - TODO:
 * Compression of LZVN/LZSS kernel cache
