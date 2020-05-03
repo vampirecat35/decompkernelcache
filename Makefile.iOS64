@@ -1,0 +1,65 @@
+##
+#
+# AnV LZVN/LZSS kernel cache decompressor V1.0
+#
+# iOS 64-bit (ARM64) version
+#
+##
+
+PREFIX=/usr/local
+LIBPREFIX=iOS
+XCODEPATH=/Applications/Xcode.app
+PLATFORM=iPhoneOS.platform
+SDK=iPhoneOS.sdk
+SDKPREFIX=$(XCODEPATH)/Contents/Developer/Platforms/$(PLATFORM)/Developer/SDKs/$(SDK)
+
+NASM=nasm
+CC=clang -I$(LIBPREFIX)/include -F$(SDKPREFIX)/System/Library/Frameworks -I$(SDKPREFIX)/usr/include
+AR=ar
+RANLIB=ranlib
+YACC=/usr/bin/bison -y
+CODESIGN=codesign
+CSIDENT=-
+LIBS=-L. -llzvn -F$(SDKPREFIX)/System/Library/Frameworks -L$(SDKPREFIX)/usr/lib -framework CoreFoundation
+INSTALL=install
+ARFLAGS=cru
+CFLAGS=-arch arm64 -Os
+ASFLAGS=$(CFLAGS)
+
+all: decompkernelcache
+
+# .asm.o:
+#	$(NASM) -o $@ -f macho64 $<
+
+# .s.o:
+#	$(CC) $(ASFLAGS) -c $< -o $@
+
+# .S.o:
+#	$(CC) $(ASFLAGS) -c $< -o $@
+
+.c.o:
+	$(CC) $(CFLAGS) -c $< -o $@
+
+IOCFUnserialize.c: IOCFUnserialize.yacc
+	$(YACC) -o $@ $<
+
+IOCFUnserialize.o: IOCFUnserialize.c
+lzvndec.o: lzvndec.c
+lzvn_size.o: lzvn_size.c
+lzvn_encode.o: lzvn_encode.c
+
+liblzvn.a: lzvndec.o lzvn_size.o lzvn_encode.o
+	$(AR) $(ARFLAGS) $@ lzvndec.o lzvn_size.o lzvn_encode.o
+	$(RANLIB) liblzvn.a
+
+decompkernelcache: decompkernelcache.o IOCFUnserialize.o liblzvn.a
+	$(CC) $(CFLAGS) -o $@ decompkernelcache.o IOCFUnserialize.o $(LIBS)
+	$(CODESIGN) -s "$(CSIDENT)" $@
+
+clean:
+	rm -f *.o IOCFUnserialize.c liblzvn.a decompkernelcache
+
+install: decompkernelcache lzvn.h liblzvn.a
+	$(INSTALL) decompkernelcache $(PREFIX)/bin
+	$(INSTALL) liblzvn.a $(PREFIX)/lib
+	$(INSTALL) lzvn.h $(PREFIX)/include
