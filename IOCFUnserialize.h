@@ -1,69 +1,76 @@
-/*
- * Copyright (c) 1998-2000 Apple Computer, Inc. All rights reserved.
- *
- * @APPLE_LICENSE_HEADER_START@
- * 
- * This file contains Original Code and/or Modifications of Original Code
- * as defined in and that are subject to the Apple Public Source License
- * Version 2.0 (the 'License'). You may not use this file except in
- * compliance with the License. Please obtain a copy of the License at
- * http://www.opensource.apple.com/apsl/ and read it before using this
- * file.
- * 
- * The Original Code and all software distributed under the License are
- * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
- * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
- * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
- * Please see the License for the specific language governing rights and
- * limitations under the License.
- * 
- * @APPLE_LICENSE_HEADER_END@
- */
-/* IOUnserialize.h created by rsulack on Mon 23-Nov-1998 */
-/* IOCFUnserialize.h creates CF collections Mon 30-Aug-1999 */
+/* A Bison parser, made by GNU Bison 3.5.1.  */
 
-#ifndef __IOKIT_IOCFUNSERIALIZE_H
-#define __IOKIT_IOCFUNSERIALIZE_H
+/* Bison interface for Yacc-like parsers in C
 
-#include <CoreFoundation/CFBase.h>
-#include <CoreFoundation/CFString.h>
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Inc.
 
-#if defined(__cplusplus)
-extern "C" {
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+
+/* As a special exception, you may create a larger work that contains
+   part or all of the Bison parser skeleton and distribute that work
+   under terms of your choice, so long as that work isn't itself a
+   parser generator using the skeleton or a modified version thereof
+   as a parser skeleton.  Alternatively, if you modify or redistribute
+   the parser skeleton itself, you may (at your option) remove this
+   special exception, which will cause the skeleton and the resulting
+   Bison output files to be licensed under the GNU General Public
+   License without this special exception.
+
+   This special exception was added by the Free Software Foundation in
+   version 2.2 of Bison.  */
+
+/* Undocumented macros, especially those whose name start with YY_,
+   are private implementation details.  Do not rely on them.  */
+
+#ifndef YY_YY_LINUX_IOKIT_IOCFUNSERIALIZE_H_INCLUDED
+# define YY_YY_LINUX_IOKIT_IOCFUNSERIALIZE_H_INCLUDED
+/* Debug traces.  */
+#ifndef YYDEBUG
+# define YYDEBUG 0
+#endif
+#if YYDEBUG
+extern int yydebug;
 #endif
 
-// on success IOCFUnserialize sets errorString to 0 and returns
-// the unserialized object.
-
-// on failure IOCFUnserialize sets errorString to a CFString object 
-// containing a error message suitable for logging and returns 0
-
-CF_RETURNS_RETAINED
-CFTypeRef
-IOCFUnserialize(const char *buffer,
-                CFAllocatorRef allocator,
-                CFOptionFlags options,
-                CFStringRef *errorString);
-
-CF_RETURNS_RETAINED
-CFTypeRef
-IOCFUnserializeBinary(const char	* buffer,
-					  size_t          bufferSize,
-					  CFAllocatorRef  allocator,
-					  CFOptionFlags	  options,
-					  CFStringRef	* errorString);
-
-CF_RETURNS_RETAINED
-CFTypeRef
-IOCFUnserializeWithSize(const char	  * buffer,
-						size_t          bufferSize,
-						CFAllocatorRef	allocator,
-						CFOptionFlags	options,
-						CFStringRef	  * errorString);
-
-#if defined(__cplusplus)
-}
+/* Token type.  */
+#ifndef YYTOKENTYPE
+# define YYTOKENTYPE
+  enum yytokentype
+  {
+    ARRAY = 258,
+    BOOLEAN = 259,
+    DATA = 260,
+    DICTIONARY = 261,
+    IDREF = 262,
+    KEY = 263,
+    NUMBER = 264,
+    SET = 265,
+    STRING = 266,
+    SYNTAX_ERROR = 267
+  };
 #endif
 
-#endif /* __IOKIT_IOCFUNSERIALIZE_H */
+/* Value type.  */
+#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+typedef int YYSTYPE;
+# define YYSTYPE_IS_TRIVIAL 1
+# define YYSTYPE_IS_DECLARED 1
+#endif
+
+
+
+int yyparse (void);
+
+#endif /* !YY_YY_LINUX_IOKIT_IOCFUNSERIALIZE_H_INCLUDED  */

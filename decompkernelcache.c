@@ -9,6 +9,12 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/IOCFUnserialize.h>
 
+
+#if defined(__linux__)
+#define kCFBundleExecutableKey CFSTR("CFBundleExecutable")
+#define kCFBundleIdentifierKey CFSTR("CFBundleIdentifier")
+#endif /* Linux Support */
+
 #if defined(_WIN32) || defined(WIN32) || defined(WINDOWS) || defined(_WINDOWS)
 #define mkdir(a,b) mkdir(a)
 #endif /* Windows Support */
