@@ -67,7 +67,7 @@
 #endif
 
 #ifndef syslog
-#define syslog(N,M...) fprintf(stderr, "%s\n", M);
+#define syslog(N,M...) fprintf(stderr, M);
 #endif
 
 #ifndef __unused
