@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -9,14 +10,30 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/IOCFUnserialize.h>
 
-
 #if defined(__linux__)
 #define kCFBundleExecutableKey CFSTR("CFBundleExecutable")
 #define kCFBundleIdentifierKey CFSTR("CFBundleIdentifier")
 #endif /* Linux Support */
 
 #if defined(_WIN32) || defined(WIN32) || defined(WINDOWS) || defined(_WINDOWS)
+#include <Windows.h>
+#include <io.h>
+
+#ifdef _MSC_VER
+#include <direct.h>
+
+#define mkdir(a,b) _mkdir(a)
+#else
 #define mkdir(a,b) mkdir(a)
+#endif
+
+#ifndef PATH_MAX
+#define PATH_MAX MAX_PATH
+#endif
+
+#ifndef mode_t
+#define mode_t int
+#endif
 #endif /* Windows Support */
 
 #include "prelink.h"
@@ -40,6 +57,12 @@ inline uint64_t OSSwapInt64(uint64_t data)
     return data;
 }
 #else /* Generic */
+#define OSSwapInt32(x) \
+((((x) & 0xff) << 24) |	\
+ (((x) & 0xff00) << 8) |	\
+ (((x) & 0xff0000) >> 8) |	\
+ (((x) & 0xff000000) >> 24))
+
 #define OSSwapInt64(x) \
     ((uint64_t)((((uint64_t)(x) & 0xff00000000000000ULL) >> 56) | \
                 (((uint64_t)(x) & 0x00ff000000000000ULL) >> 40) | \
@@ -65,7 +88,7 @@ static __inline uint32_t OSSwapInt32(uint32_t data)
     return data;
 }
 
-#define OSSwapConstInt64(x) \
+#define OSSwapInt64(x) \
     ((uint64_t)((((uint64_t)(x) & 0xff00000000000000ULL) >> 56) | \
                 (((uint64_t)(x) & 0x00ff000000000000ULL) >> 40) | \
                 (((uint64_t)(x) & 0x0000ff0000000000ULL) >> 24) | \
@@ -777,7 +800,11 @@ uint8_t listKexts(unsigned char *aFileBuffer, const char *outfile)
 
         if (outfile != NULL)
         {
+#if defined(_MSC_VER) && __STDC_WANT_SECURE_LIB__
+            fopen_s(&out, outfile, "wb");
+#else
             out = fopen(outfile, "wb");
+#endif
         }
 
         if (prelinkInfoPlist)
@@ -792,10 +819,10 @@ uint8_t listKexts(unsigned char *aFileBuffer, const char *outfile)
             kextPlistArray = (CFArrayRef)CFDictionaryGetValue(prelinkInfoPlist, CFSTR("_PrelinkInfoDictionary"));
             CFIndex i = 0;
             CFIndex kextCount = CFArrayGetCount(kextPlistArray);
-            printf("kextCount: %ld\n", kextCount);
+            printf("kextCount: %ld\n", (long)kextCount);
             if (out != NULL)
             {
-                fprintf(out, "kextCount: %ld\n", kextCount);
+                fprintf(out, "kextCount: %ld\n", (long)kextCount);
             }
 
             //char kextIdentifierBuffer[64];    // KMOD_MAX_NAME = 64
@@ -920,9 +947,17 @@ uint8_t saveKernel(unsigned char *aFileBuffer, const char *outfile)
 
         if (outfile == NULL)
         {
+#if defined(_MSC_VER) && __STDC_WANT_SECURE_LIB__
+            fopen_s(&fp, outfile, "wb");
+#else
             fp = fopen("kernel", "wb");
+#endif
         } else {
+#if defined(_MSC_VER) && __STDC_WANT_SECURE_LIB__
+            fopen_s(&fp, outfile, "wb");
+#else
             fp = fopen(outfile, "wb");
+#endif
         }
 
         fwrite(aFileBuffer, 1, (long)(((swapped == 0) ? linkeditSegment64->fileoff : OSSwapInt64(linkeditSegment64->fileoff)) + ((swapped == 0) ? linkeditSegment64->filesize : OSSwapInt64(linkeditSegment64->filesize))), fp);
@@ -955,12 +990,20 @@ uint8_t saveKernel(unsigned char *aFileBuffer, const char *outfile)
         
         if (outfile == NULL)
         {
+#if defined(_MSC_VER) && __STDC_WANT_SECURE_LIB__
+            fopen_s(&fp, outfile, "wb");
+#else
             fp = fopen("kernel", "wb");
+#endif
         } else {
+#if defined(_MSC_VER) && __STDC_WANT_SECURE_LIB__
+            fopen_s(&fp, outfile, "wb");
+#else
             fp = fopen(outfile, "wb");
+#endif
         }
 
-        fwrite(aFileBuffer, 1, (long)(((swapped == 0) ? linkeditSegment32->fileoff : OSSwapInt32(linkeditSegment32->fileoff)) + ((swapped == 0) ? linkeditSegment32->filesize : OSSwapInt32(linkeditSegment32->filesize))), fp);
+        fwrite(aFileBuffer, 1, (size_t)(((swapped == 0) ? linkeditSegment32->fileoff : OSSwapInt32(linkeditSegment32->fileoff)) + ((swapped == 0) ? linkeditSegment32->filesize : OSSwapInt32(linkeditSegment32->filesize))), fp);
         printf("%ld bytes written\n", ftell(fp));
         fclose(fp);
     } else {
@@ -972,7 +1015,7 @@ uint8_t saveKernel(unsigned char *aFileBuffer, const char *outfile)
     return 0;
 }
 
-int _mkdir(char *aDirectory, mode_t aMode)
+int d_mkdir(char *aDirectory, mode_t aMode)
 {
     char * p = aDirectory;
     struct stat sb;
@@ -1061,9 +1104,17 @@ uint8_t saveDictionary(unsigned char * aFileBuffer, const char *outfile)
 
             if (outfile == NULL)
             {
+#if defined(_MSC_VER) && __STDC_WANT_SECURE_LIB__
+                fopen_s(&fp, outfile, "wb");
+#else
                 fp = fopen("Dictionary.plist", "wb");
+#endif
             } else {
+#if defined(_MSC_VER) && __STDC_WANT_SECURE_LIB__
+                fopen_s(&fp, outfile, "wb");
+#else
                 fp = fopen(outfile, "wb");
+#endif
             }
 
             fwrite(buffer, 1, xmlLength, fp);
@@ -1114,7 +1165,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                 kextPlistArray = (CFArrayRef)CFDictionaryGetValue(prelinkInfoPlist, CFSTR("_PrelinkInfoDictionary"));
                 CFIndex i = 0;
                 CFIndex kextCount = CFArrayGetCount(kextPlistArray);
-                printf("kextCount: %ld\n", kextCount);
+                printf("kextCount: %ld\n", (long)kextCount);
                 
                 char kextIdentifierBuffer[KMOD_MAX_NAME];    // KMOD_MAX_NAME = 64
                 char kextBundlePathBuffer[PATH_MAX];
@@ -1143,7 +1194,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                     if (kextIdentifier)
                     {
                         CFStringGetCString(kextIdentifier, kextIdentifierBuffer, sizeof(kextIdentifierBuffer), kCFStringEncodingUTF8);
-                        printf("\nCFBundleIdentifier[%3ld].......: %s\n", i, kextIdentifierBuffer);
+                        printf("\nCFBundleIdentifier[%3ld].......: %s\n", (long)i, kextIdentifierBuffer);
                     }
 
                     CFStringRef bundlePath = (CFStringRef)CFDictionaryGetValue(kextPlist, CFSTR(kPrelinkBundlePathKey));
@@ -1158,8 +1209,8 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
 
                         if (stat(kextPath, &st) == -1)
                         {
-                            printf("_mkdir(%s, 755)\n", kextPath);
-                            _mkdir(kextPath, 0755);
+                            printf("d_mkdir(%s, 755)\n", kextPath);
+                            d_mkdir(kextPath, 0755);
                         }
                     }
 
@@ -1177,8 +1228,8 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
 
                             if (stat(kextExecutablePath, &st) == -1)
                             {
-                                _mkdir(kextExecutablePath, 0755);
-                                printf("_mkdir(%s, 755)\n", kextExecutablePath);
+                                d_mkdir(kextExecutablePath, 0755);
+                                printf("d_mkdir(%s, 755)\n", kextExecutablePath);
                             }
                         } else {
                             snprintf(kextExecutablePath, sizeof(kextExecutablePath), "%s", kextPath);
@@ -1230,9 +1281,15 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                             char executablePath[PATH_MAX];
                             snprintf(executablePath, sizeof(executablePath), "%s/%s", kextExecutablePath, kextIdentifierBuffer);
                             printf("executablePath................: %s\n", executablePath);
-                            
-                            FILE *executable = fopen(executablePath, "w");
-                            fwrite((aFileBuffer + offset), 1, sourceSize, executable);
+
+#if defined(_MSC_VER) && __STDC_WANT_SECURE_LIB__
+                            FILE *executable = NULL;
+                            fopen_s(&executable, executablePath, "wb");
+#else
+                            FILE *executable = fopen(executablePath, "wb");
+#endif
+
+                            fwrite((aFileBuffer + offset), 1, (size_t)sourceSize, executable);
                             printf("Executable....................: %s (%ld bytes written)\n", kextIdentifierBuffer, ftell(executable));
                             fclose(executable);
                         }
@@ -1244,12 +1301,18 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                     if (xmlError == NULL)
                     {
                         const unsigned char * buffer = CFDataGetBytePtr(xmlData);
-                        long xmlLength = CFDataGetLength(xmlData);
+                        long xmlLength = (long)CFDataGetLength(xmlData);
 
                         snprintf(kextPlistPath, sizeof(kextPlistPath), "%s/Info.plist", kextPath);
                         printf("kextPlistPath.................: %s\n", kextPlistPath);
 
-                        FILE *infoPlist = fopen(kextPlistPath, "w");
+#if defined(_MSC_VER) && __STDC_WANT_SECURE_LIB__
+                        FILE *infoPlist = NULL;
+                        fopen_s(&infoPlist, kextPlistPath, "wb");
+#else
+                        FILE *infoPlist = fopen(kextPlistPath, "wb");
+#endif
+
                         fwrite(buffer, 1, xmlLength, infoPlist);
                         printf("Info.plist....................: %ld bytes written\n", ftell(infoPlist));
                         
@@ -1259,7 +1322,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                     }
                 }
                 
-                printf("\n%ld kexts extracted to directory %s (%d signed and %ld unsigned)\n", kextCount, outdir, signedKexts, (kextCount - signedKexts));
+                printf("\n%ld kexts extracted to directory %s (%d signed and %ld unsigned)\n", (long)kextCount, outdir, signedKexts, (long)(kextCount - signedKexts));
             } else {
                 printf("ERROR: Can't unserialize _PrelinkInfoDictionary!\n");
                 return -1;
@@ -1281,7 +1344,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                 kextPlistArray = (CFArrayRef)CFDictionaryGetValue(prelinkInfoPlist, CFSTR("_PrelinkInfoDictionary"));
                 CFIndex i = 0;
                 CFIndex kextCount = CFArrayGetCount(kextPlistArray);
-                printf("kextCount: %ld\n", kextCount);
+                printf("kextCount: %ld\n", (long)kextCount);
                 
                 char kextIdentifierBuffer[KMOD_MAX_NAME];
                 char kextBundlePathBuffer[PATH_MAX];
@@ -1310,7 +1373,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                     if (kextIdentifier)
                     {
                         CFStringGetCString(kextIdentifier, kextIdentifierBuffer, sizeof(kextIdentifierBuffer), kCFStringEncodingUTF8);
-                        printf("\nCFBundleIdentifier[%3ld].......: %s\n", i, kextIdentifierBuffer);
+                        printf("\nCFBundleIdentifier[%3ld].......: %s\n", (long)i, kextIdentifierBuffer);
                     }
                     
                     CFStringRef bundlePath = (CFStringRef)CFDictionaryGetValue(kextPlist, CFSTR(kPrelinkBundlePathKey));
@@ -1325,8 +1388,8 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                         
                         if (stat(kextPath, &st) == -1)
                         {
-                            printf("_mkdir(%s, 755)\n", kextPath);
-                            _mkdir(kextPath, 0755);
+                            printf("d_mkdir(%s, 755)\n", kextPath);
+                            d_mkdir(kextPath, 0755);
                         }
                     }
                     
@@ -1344,8 +1407,8 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                             
                             if (stat(kextExecutablePath, &st) == -1)
                             {
-                                _mkdir(kextExecutablePath, 0755);
-                                printf("_mkdir(%s, 755)\n", kextExecutablePath);
+                                d_mkdir(kextExecutablePath, 0755);
+                                printf("d_mkdir(%s, 755)\n", kextExecutablePath);
                             }
                         } else {
                             snprintf(kextExecutablePath, sizeof(kextExecutablePath), "%s", kextPath);
@@ -1396,9 +1459,15 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                             char executablePath[PATH_MAX];
                             snprintf(executablePath, sizeof(executablePath), "%s/%s", kextExecutablePath, kextIdentifierBuffer);
                             printf("executablePath................: %s\n", executablePath);
-                            
-                            FILE *executable = fopen(executablePath, "w");
-                            fwrite((aFileBuffer + offset), 1, sourceSize, executable);
+
+#if defined(_MSC_VER) && __STDC_WANT_SECURE_LIB__
+                            FILE *executable = NULL;
+                            fopen_s(&executable, executablePath, "wb");
+#else
+                            FILE *executable = fopen(executablePath, "wb");
+#endif
+
+                            fwrite((aFileBuffer + offset), 1, (size_t)sourceSize, executable);
                             printf("Executable....................: %s (%ld bytes written)\n", kextIdentifierBuffer, ftell(executable));
                             fclose(executable);
                         }
@@ -1410,12 +1479,18 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                     if (xmlError == NULL)
                     {
                         const unsigned char * buffer = CFDataGetBytePtr(xmlData);
-                        long xmlLength = CFDataGetLength(xmlData);
+                        long xmlLength = (long)CFDataGetLength(xmlData);
 
                         snprintf(kextPlistPath, sizeof(kextPlistPath), "%s/Info.plist", kextPath);
                         printf("kextPlistPath.................: %s\n", kextPlistPath);
 
-                        FILE *infoPlist = fopen(kextPlistPath, "w");
+#if defined(_MSC_VER) && __STDC_WANT_SECURE_LIB__
+                        FILE *infoPlist = NULL;
+                        fopen_s(&infoPlist, kextPlistPath, "wb");
+#else
+                        FILE *infoPlist = fopen(kextPlistPath, "wb");
+#endif
+
                         fwrite(buffer, 1, xmlLength, infoPlist);
                         printf("Info.plist....................: %ld bytes written\n", ftell(infoPlist));
 
@@ -1425,7 +1500,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                     }
                 }
                 
-                printf("\n%ld kexts extracted to directory %s (%d signed and %ld unsigned)\n", kextCount, outdir, signedKexts, (kextCount - signedKexts));
+                printf("\n%ld kexts extracted to directory %s (%d signed and %ld unsigned)\n", (long)kextCount, outdir, signedKexts, (long)(kextCount - signedKexts));
             } else {
                 printf("ERROR: Can't unserialize _PrelinkInfoDictionary!\n");
 
@@ -1833,7 +1908,7 @@ int main(int argc, char **argv)
                 prelinkfile = (PrelinkedKernelHeader *)((unsigned char *)buffer + OSSwapInt64(fatarch64->offset));
             }
             
-            while ((ac < OSSwapInt32(fathdr->nfat_arch)) && ((prelinkfile->signature != 0x706D6F63) || (prelinkfile->signature != 0x636F6D70)))
+            while ((ac < OSSwapInt32(fathdr->nfat_arch)) && ((prelinkfile->signature != 0x706D6F63) | (prelinkfile->signature != 0x636F6D70)))
             {
                 fatarch64 = (fat_arch_64_t *)((unsigned char *)fatarch64 + sizeof(fat_arch_64_t));
                 
@@ -1876,7 +1951,7 @@ int main(int argc, char **argv)
                 prelinkfile = (PrelinkedKernelHeader *)((unsigned char *)buffer + fatarch->offset);
             }
             
-            while ((ac < fathdr->nfat_arch) && ((prelinkfile->signature != 0x636F6D70) || (prelinkfile->signature != 0x706D6F63)))
+            while ((ac < fathdr->nfat_arch) && ((prelinkfile->signature != 0x636F6D70) | (prelinkfile->signature != 0x706D6F63)))
             {
                 fatarch = (fat_arch_t *)((unsigned char *)fatarch + sizeof(fat_arch_t));
                 
@@ -1919,7 +1994,7 @@ int main(int argc, char **argv)
                 prelinkfile = (PrelinkedKernelHeader *)((unsigned char *)buffer + fatarch64->offset);
             }
 
-            while ((ac < fathdr->nfat_arch) && ((prelinkfile->signature != 0x636F6D70) || (prelinkfile->signature != 0x706D6F63)))
+            while ((ac < fathdr->nfat_arch) && ((prelinkfile->signature != 0x636F6D70) | (prelinkfile->signature != 0x706D6F63)))
             {
                 fatarch64 = (fat_arch_64_t *)((unsigned char *)fatarch64 + sizeof(fat_arch_64_t));
                 

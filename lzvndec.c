@@ -53,6 +53,12 @@ inline uint64_t OSSwapInt64(uint64_t data)
     return data;
 }
 #else /* Generic */
+#define OSSwapInt32(x) \
+((((x) & 0xff) << 24) |	\
+ (((x) & 0xff00) << 8) |	\
+ (((x) & 0xff0000) >> 8) |	\
+ (((x) & 0xff000000) >> 24))
+
 #define OSSwapInt64(x) \
     ((uint64_t)((((uint64_t)(x) & 0xff00000000000000ULL) >> 56) | \
                 (((uint64_t)(x) & 0x00ff000000000000ULL) >> 40) | \
@@ -78,7 +84,7 @@ static __inline uint32_t OSSwapInt32(uint32_t data)
     return data;
 }
 
-#define OSSwapConstInt64(x) \
+#define OSSwapInt64(x) \
     ((uint64_t)((((uint64_t)(x) & 0xff00000000000000ULL) >> 56) | \
                 (((uint64_t)(x) & 0x00ff000000000000ULL) >> 40) | \
                 (((uint64_t)(x) & 0x0000ff0000000000ULL) >> 24) | \
@@ -108,9 +114,17 @@ static __inline uint32_t OSSwapInt32(uint32_t data)
 #define DEBUG_STATE_ENABLED		0
 
 #if DEBUG_STATE_ENABLED
-#define _LZVN_DEBUG_DUMP(x...)	printf(x)
+#ifdef _MSC_VER
+#define _LZVN_DEBUG_DUMP printf
+#else
+#define _LZVN_DEBUG_DUMP(x...) printf(x)
+#endif
+#else
+#ifdef _MSC_VER
+#define _LZVN_DEBUG_DUMP(x)
 #else
 #define _LZVN_DEBUG_DUMP(x...)
+#endif
 #endif
 
 #define LZVN_0		0
@@ -191,7 +205,7 @@ size_t lzvn_decode(void * decompressedData, size_t decompressedSize, void * comp
 		return 0;
 	}
 
-	compressedSize = (compBuffer + compressedSize - 8);								// lea	-0x8(%rdx,%rcx,1),%rcx
+	compressedSize = (size_t)(compBuffer + compressedSize - 8);						// lea	-0x8(%rdx,%rcx,1),%rcx
 
 	if (compBuffer > compressedSize)												// cmp	%rcx,%rdx
 	{
@@ -389,7 +403,7 @@ size_t lzvn_decode(void * decompressedData, size_t decompressedSize, void * comp
 				}
 				
 				currentLength = (length + compBufferPointer);						// lea	(%rax,%r8,1),%r11
-				compBufferPointer = -compBufferPointer;								// neg	%r8
+				compBufferPointer = (uint64_t)(-(int64_t)compBufferPointer);								// neg	%r8
 				
 				if (currentLength > decompressedSize)								// cmp	%rsi,%r11
 				{
@@ -420,8 +434,8 @@ size_t lzvn_decode(void * decompressedData, size_t decompressedSize, void * comp
 
 				} while ((UINT64_MAX - (compBufferPointer - 8)) >= 8);				// jae	Llzvn_l1
 
-				length = currentLength;												// mov	%r11,%rax
-				length -= decompBuffer;												// sub	%rdi,%rax
+				length = (size_t)currentLength;												// mov	%r11,%rax
+				length -= (size_t)decompBuffer;												// sub	%rdi,%rax
 				
 				compBufferPointer = *(uint64_t *)compBuffer;						// mov	(%rdx),%r8
 				caseTableIndex = (compBufferPointer & 255);							// movzbq (%rdx),%r9
@@ -433,7 +447,7 @@ size_t lzvn_decode(void * decompressedData, size_t decompressedSize, void * comp
 
 				_LZVN_DEBUG_DUMP("jmpTable(2)\n");
 
-				currentLength = (decompressedSize + 8);								// lea	0x8(%rsi),%r11
+				currentLength = ((uint64_t)decompressedSize + 8);								// lea	0x8(%rsi),%r11
 
 			case LZVN_3: /***********************************************************/
 
@@ -443,7 +457,7 @@ size_t lzvn_decode(void * decompressedData, size_t decompressedSize, void * comp
 
 					address = (compBuffer + compBufferPointer);						// movzbq (%rdx,%r8,1),%r9
 					caseTableIndex = (*((uint64_t *)address) & 255);
-					memcpy((void *)decompBuffer + length, &caseTableIndex, 1);
+					memcpy((char *)decompBuffer + length, &caseTableIndex, 1);
 					length++;														// add	$0x1,%rax
 					
 					if (currentLength == length)									// cmp	%rax,%r11
@@ -465,7 +479,7 @@ size_t lzvn_decode(void * decompressedData, size_t decompressedSize, void * comp
 
 				_LZVN_DEBUG_DUMP("jmpTable(4)\n");
 
-				currentLength = (decompressedSize + 8);								// lea	0x8(%rsi),%r11
+				currentLength = ((uint64_t)decompressedSize + 8);								// lea	0x8(%rsi),%r11
 
 			case LZVN_9: /**********************************************************/
 
@@ -477,7 +491,7 @@ size_t lzvn_decode(void * decompressedData, size_t decompressedSize, void * comp
 					caseTableIndex = (*((uint8_t *)address) & 255);
 
 					compBufferPointer++;											// add	$0x1,%r8
-					memcpy((void *)decompBuffer + length, &caseTableIndex, 1);		// mov	%r9,(%rdi,%rax,1)
+					memcpy((char *)decompBuffer + length, &caseTableIndex, 1);		// mov	%r9,(%rdi,%rax,1)
 					length++;														// add	$0x1,%rax
 					
 					if (length == currentLength)									// cmp	%rax,%r11
@@ -505,13 +519,13 @@ size_t lzvn_decode(void * decompressedData, size_t decompressedSize, void * comp
 					caseTableIndex = *((uint64_t *)address);
 
 					compBufferPointer += 8;											// add	$0x8,%r8
-					memcpy((void *)decompBuffer + length, &caseTableIndex, 8);		// mov	%r9,(%rdi,%rax,1)
+					memcpy((char *)decompBuffer + length, &caseTableIndex, 8);		// mov	%r9,(%rdi,%rax,1)
 					length += 8;													// add	$0x8,%rax
 					byteCount -= 8;													// sub	$0x8,%r10
 					
 				} while ((byteCount + 8) > 8);										// ja	Llzvn_l5
 
-				length += byteCount;												// add	%r10,%rax
+				length += (size_t)byteCount;												// add	%r10,%rax
 				compBufferPointer = *(uint64_t *)compBuffer;						// mov	(%rdx),%r8
 				caseTableIndex = (compBufferPointer & 255);							// movzbq	(%rdx),%r9
 
@@ -527,8 +541,8 @@ size_t lzvn_decode(void * decompressedData, size_t decompressedSize, void * comp
 
 				if (currentLength < decompressedSize)								// cmp	%rsi,%r11 (block_end: jae	Llzvn_l8)
 				{
-					memcpy((void *)decompBuffer + length, &compBufferPointer, 8);	// mov	%r8,(%rdi,%rax,1)
-					length += caseTableIndex;										// add	%r9,%rax
+					memcpy((char *)decompBuffer + length, &compBufferPointer, 8);	// mov	%r8,(%rdi,%rax,1)
+					length += (size_t)caseTableIndex;										// add	%r9,%rax
 					compBufferPointer = length;										// mov	%rax,%r8
 						
 					if (compBufferPointer < negativeOffset)							// jb	Llzvn_exit
@@ -558,7 +572,7 @@ size_t lzvn_decode(void * decompressedData, size_t decompressedSize, void * comp
 					break;
 				}
 
-				currentLength = (decompressedSize + 8);								// lea	0x8(%rsi),%r11
+				currentLength = ((uint64_t)decompressedSize + 8);								// lea	0x8(%rsi),%r11
 
 			case LZVN_6: /**********************************************************/
 
@@ -566,7 +580,7 @@ size_t lzvn_decode(void * decompressedData, size_t decompressedSize, void * comp
 				{
 					_LZVN_DEBUG_DUMP("jmpTable(6)\n");
 
-					memcpy((void *)decompBuffer + length, &compBufferPointer, 1);	// mov	%r8b,(%rdi,%rax,1)
+					memcpy((char *)decompBuffer + length, &compBufferPointer, 1);	// mov	%r8b,(%rdi,%rax,1)
 					length++;														// add	$0x1,%rax
 						
 					if (length == currentLength)									// cmp	%rax,%r11

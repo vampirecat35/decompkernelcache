@@ -35,8 +35,8 @@ all: decompkernelcache.exe
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 
-IOCFUnserialize.c: IOCFUnserialize.yacc
-	$(YACC) -o $@ $<
+# IOCFUnserialize.c: IOCFUnserialize.yacc
+#	$(YACC) -o $@ $<
 
 decompkernelcacheres.o: decompkernelcache.rc
 	$(WINDRES) -o $@ $<
@@ -44,7 +44,7 @@ decompkernelcacheres.o: decompkernelcache.rc
 lzvndec.o: lzvndec.c
 lzvn_size.o: lzvn_size.c
 lzvn_encode.o: lzvn_encode.c
-IOCFUnserialize.o: IOCFUnserialize.c
+IOCFUnserialize.o: WINSUPSRC/IOCFUnserialize.c
 
 liblzvn.a: lzvndec.o lzvn_size.o lzvn_encode.o
 	$(AR) $(ARFLAGS) $@ $^
