@@ -39,11 +39,10 @@ all: decompkernelcache
 	$(CC) $(CFLAGS) -c $< -o $@
 
 lzvndec.o: lzvndec.c
-lzvn_size.o: lzvn_size.c
 lzvn_encode.o: lzvn_encode.c
 
-liblzvn.a: lzvndec.o lzvn_size.o lzvn_encode.o
-	$(AR) $(ARFLAGS) $@ lzvndec.o lzvn_size.o lzvn_encode.o
+liblzvn.a: lzvndec.o lzvn_encode.o
+	$(AR) $(ARFLAGS) $@ lzvndec.o lzvn_encode.o
 	$(RANLIB) liblzvn.a
 
 decompkernelcache: decompkernelcache.o liblzvn.a

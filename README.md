@@ -1,7 +1,7 @@
 decompkernelcache
 ===============
 
-Mac OS X prelinked kernel compressor/decompressor/extractor  (V2.2)
+Mac OS X prelinked kernel compressor/decompressor/extractor  (V2.3)
 
 - Currently implemented: Decompression and extraction of LZVN/LZSS kernel cache
 
@@ -15,8 +15,8 @@ Mac OS X prelinked kernel compressor/decompressor/extractor  (V2.2)
 * Added WatchOS ARMV7K and ARM64_32 support
 * Added AppleTVOS ARM64 support
 * Added Android support
+* Added Compression of LZVN/LZSS kernel cache
+* Updated to new Visual Studio project
 
 - TODO:
-* Compression of LZVN/LZSS kernel cache
 * Adding kexts to kernel cache
-* Update Visual Studio project

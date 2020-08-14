@@ -5,7 +5,7 @@
         type="win32"
         publicKeyToken="cafebabefeedface"
         name="decompkernelcache"
-        version="1.8.0.0"
+        version="2.3.0.0"
         processorArchitecture="x86" />
 
   <description>AnV Mac OS X kernelcache decompression tool</description>

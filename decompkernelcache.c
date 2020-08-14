@@ -991,7 +991,7 @@ uint8_t saveKernel(unsigned char *aFileBuffer, const char *outfile)
         if (outfile == NULL)
         {
 #if defined(_MSC_VER) && __STDC_WANT_SECURE_LIB__
-            fopen_s(&fp, outfile, "wb");
+            fopen_s(&fp, "kernel", "wb");
 #else
             fp = fopen("kernel", "wb");
 #endif
@@ -1105,7 +1105,7 @@ uint8_t saveDictionary(unsigned char * aFileBuffer, const char *outfile)
             if (outfile == NULL)
             {
 #if defined(_MSC_VER) && __STDC_WANT_SECURE_LIB__
-                fopen_s(&fp, outfile, "wb");
+                fopen_s(&fp, "Dictionary.plist", "wb");
 #else
                 fp = fopen("Dictionary.plist", "wb");
 #endif
@@ -1250,7 +1250,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
 
                         CFNumberRef kextSourceAddress = (CFNumberRef)CFDictionaryGetValue(kextPlist, CFSTR(kPrelinkExecutableSourceKey));
 
-                        if (kextSourceAddress)
+                        if (kextSourceAddress != NULL)
                         {
                             CFNumberGetValue(kextSourceAddress, kCFNumberSInt64Type, &sourceAddress);
                             offset = ((sourceAddress - ((swapped == 0) ? prelinkTextSegment64->vmaddr : OSSwapInt64(prelinkTextSegment64->vmaddr))) + ((swapped == 0) ? prelinkTextSegment64->fileoff : OSSwapInt64(prelinkTextSegment64->fileoff)));
@@ -1260,7 +1260,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                         
                         CFNumberRef kextSourceSize = (CFNumberRef)CFDictionaryGetValue(kextPlist, CFSTR(kPrelinkExecutableSizeKey));
                         
-                        if (kextSourceSize)
+                        if (kextSourceSize != NULL)
                         {
                             CFNumberGetValue(kextSourceSize, kCFNumberSInt64Type, &sourceSize);
                             printf("_PrelinkExecutableSize........: 0x%llx/%lld\n", sourceSize, sourceSize);
@@ -1429,16 +1429,16 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                         
                         CFNumberRef kextSourceAddress = (CFNumberRef)CFDictionaryGetValue(kextPlist, CFSTR(kPrelinkExecutableSourceKey));
                         
-                        if (kextSourceAddress)
+                        if (kextSourceAddress != NULL)
                         {
-                            CFNumberGetValue(kextSourceAddress, kCFNumberSInt32Type, &sourceAddress);
+                            CFNumberGetValue(kextSourceAddress, kCFNumberSInt64Type, &sourceAddress);
                             offset = ((sourceAddress - prelinkTextSegment32->vmaddr) + prelinkTextSegment32->fileoff);
                             printf("_PrelinkExecutableSourceAddr32..: 0x%llx -> 0x%llx/%lld (offset)\n", sourceAddress, offset, offset);
                         }
                         
                         CFNumberRef kextSourceSize = (CFNumberRef)CFDictionaryGetValue(kextPlist, CFSTR(kPrelinkExecutableSizeKey));
 
-                        if (kextSourceSize)
+                        if (kextSourceSize != NULL)
                         {
                             CFNumberGetValue(kextSourceSize, kCFNumberSInt64Type, &sourceSize);
                             printf("_PrelinkExecutableSize........: 0x%llx/%lld\n", sourceSize, sourceSize);
@@ -1517,13 +1517,15 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
 
 void Usage(const char *name)
 {
-    printf("AnV LZVN/LZSS kernel cache tool and decompressor V2.2\n");
+    printf("AnV LZVN/LZSS kernel cache tool and decompressor V2.3\n");
     printf("Usage: %s <infile> <outfile> [-kernel|-kexts|-list|-dict] [arch]\n\n", name);
-    printf("-kernel - extracts only the kernel from the prelinked kernel\n");
-    printf("-kexts  - extracts the kexts from the prelinked kernel\n");
-    printf("-list   - lists the info in the prelinked kernel\n");
-    printf("-dict   - extracts the dictionary from the prelinked kexts\n");
-    printf("arch    - is an architecture to use\n\n");
+    printf("-kernel     - extracts only the kernel from the prelinked kernel\n");
+    printf("-kexts      - extracts the kexts from the prelinked kernel\n");
+    printf("-list       - lists the info in the prelinked kernel\n");
+    printf("-dict       - extracts the dictionary from the prelinked kexts\n");
+    printf("-recomplzss - compress prelinked kernel using LZSS\n");
+    printf("-recomplzvn - compress prelinked kernel using LZVN\n");
+    printf("arch        - is an architecture to use\n\n");
     printf("Supported CPU architectures:\n");
     printf(" -> i386     => Intel 32-bit\n");
     printf(" -> x86_64   => Intel 64-bit\n");
@@ -1543,10 +1545,12 @@ void Usage(const char *name)
 
 #if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS) || defined(WINDOWS)
     printf("Windows version\n");
+#elif defined(__ANDROID__)
+    printf("Android version\n");
 #elif defined(__linux__)
     printf("Linux version\n");
 #elif defined(__APPLE__) && defined(__MACH__)
-    printf("macOS/iOS version\n");
+    printf("macOS/iOS version/AppleTV OS/WatchOS\n");
 #endif /* Version info extra */
 }
 
@@ -1588,6 +1592,325 @@ uint32_t local_adler32(uint8_t *buffer, int32_t length)
 #ifndef THRESHOLD
 #define THRESHOLD 2     /* encode string into position and length */
 #endif /* THRESHOLD */
+
+#ifndef NIL
+#define NIL N /* index for root of binary search trees */
+#endif
+
+typedef struct encode_state
+{
+    /*
+     * left & right children & parent. These constitute binary search trees.
+     */
+    long lchild[N+1];
+    long rchild[N+257];
+    long parent[N+1];
+
+    /* ring buffer of size N, with extra F-1 bytes to aid string comparison */
+    uint8_t text_buf[(N+F)-1];
+
+    /*
+     * match_length of longest match.
+     * These are set by the insert_node() procedure.
+     */
+    long match_position;
+    long match_length;
+} encode_state_t;
+
+static void init_state(struct encode_state *sp)
+{
+    size_t i = 0;
+
+    if (sp == NULL)
+    {
+    return;
+    }
+
+    bzero(sp, sizeof(*sp));
+
+    for (i = 0; i < (N - F); i++)
+    {
+        sp->text_buf[i] = ' ';
+    }
+
+    for (i = (N + 1); i <= (N + 256); i++)
+    {
+        sp->rchild[i] = NIL;
+    }
+
+    for (i = 0; i < N; i++)
+    {
+        sp->parent[i] = NIL;
+    }
+}
+
+static void insert_node(struct encode_state *sp, int r)
+{
+    int cmp = 1;
+    uint8_t *key = &sp->text_buf[r];
+    int p = N + 1 + key[0];
+    size_t i = 0;
+
+    sp->rchild[r] = sp->lchild[r] = NIL;
+    sp->match_length = 0;
+
+    while (1)
+    {
+        if (cmp >= 0)
+    {
+            if (sp->rchild[p] != NIL)
+        {
+                p = (int)sp->rchild[p];
+            } else {
+                sp->rchild[p] = r;
+                sp->parent[r] = p;
+                return;
+            }
+        } else {
+            if (sp->lchild[p] != NIL)
+        {
+                p = (int)sp->lchild[p];
+            } else {
+                sp->lchild[p] = r;
+                sp->parent[r] = p;
+
+                return;
+            }
+        }
+
+        for (i = 1; i < F; i++)
+    {
+            if ((cmp = (key[i] - sp->text_buf[p+i])) != 0)
+        {
+                break;
+        }
+        }
+
+        if (i > sp->match_length)
+    {
+            sp->match_position = p;
+
+            if ((sp->match_length = i) >= F)
+        {
+                break;
+        }
+        }
+    }
+
+    sp->parent[r] = sp->parent[p];
+
+    sp->lchild[r] = sp->lchild[p];
+    sp->rchild[r] = sp->rchild[p];
+
+    sp->parent[sp->lchild[p]] = r;
+    sp->parent[sp->rchild[p]] = r;
+
+    if (sp->rchild[sp->parent[p]] == p)
+    {
+        sp->rchild[sp->parent[p]] = r;
+    } else {
+        sp->lchild[sp->parent[p]] = r;
+    }
+
+    sp->parent[p] = NIL; /* remove p */
+}
+
+/* deletes node p from tree */
+static void delete_node(struct encode_state *sp, int p)
+{
+    int q = 0;
+
+    if (sp->parent[p] == NIL)
+    {
+        return; /* not in tree */
+    }
+
+    if (sp->rchild[p] == NIL)
+    {
+        q = (int)sp->lchild[p];
+    } else if (sp->lchild[p] == NIL) {
+        q = (int)sp->rchild[p];
+    } else {
+        q = (int)sp->lchild[p];
+
+        if (sp->rchild[q] != NIL)
+    {
+            do
+        {
+                q = (int)sp->rchild[q];
+            } while (sp->rchild[q] != NIL);
+
+            sp->rchild[sp->parent[q]] = sp->lchild[q];
+            sp->parent[sp->lchild[q]] = sp->parent[q];
+
+            sp->lchild[q] = sp->lchild[p];
+            sp->parent[sp->lchild[p]] = q;
+        }
+
+        sp->rchild[q] = sp->rchild[p];
+        sp->parent[sp->rchild[p]] = q;
+    }
+
+    sp->parent[q] = sp->parent[p];
+
+    if (sp->rchild[sp->parent[p]] == p)
+    {
+        sp->rchild[sp->parent[p]] = q;
+    } else {
+        sp->lchild[sp->parent[p]] = q;
+    }
+
+    sp->parent[p] = NIL;
+}
+
+void *compress_lzss(void *dst, size_t dstlen, void *src, size_t srcLen)
+{
+    /* Encoding state, mostly tree but some current match stuff */
+    struct encode_state *sp = NULL;
+
+    long i = 0, c = 0, len = 0, r = 0, s = 0, last_match_length = 0, code_buf_ptr = 0;
+
+    uint8_t code_buf[17] = { 0x00 };
+    uint8_t mask = 0;
+    uint8_t *srcend = (uint8_t *)(src) + srcLen;
+    uint8_t *dstend = (uint8_t *)(dst) + dstlen;
+
+    /* initialize trees */
+    sp = (struct encode_state *)malloc(sizeof(*sp));
+
+    init_state(sp);
+
+    /*
+     * code_buf[1..16] saves eight units of code, and code_buf[0] works
+     * as eight flags, "1" representing that the unit is an unencoded
+     * letter (1 byte), "0" a position-and-length pair (2 bytes).
+     * Thus, eight units require at most 16 bytes of code.
+     */
+    code_buf[0] = 0;
+    code_buf_ptr = mask = 1;
+
+    /* Clear the buffer with any character that will appear often. */
+    s = 0;
+    r = N - F;
+
+    /* Read F bytes into the last F bytes of the buffer */
+    for (len = 0; (len < F) && ((uint8_t *)(src) < srcend); len++)
+    {
+        sp->text_buf[r + len] = *(uint8_t *)(src++);
+    }
+
+    if (len == 0)
+    {
+    /* text of size zero */
+        return (NULL);
+    }
+
+    /*
+     * Insert the F strings, each of which begins with one or more
+     * 'space' characters.  Note the order in which these strings are
+     * inserted.  This way, degenerate trees will be less likely to occur.
+     */
+    for (i = 1; i <= F; i++)
+    {
+        insert_node(sp, (int)(r - i));
+    }
+
+    /*
+     * Finally, insert the whole string just read.
+     * The global variables match_length and match_position are set.
+     */
+    insert_node(sp, (int)r);
+
+    do {
+        /* match_length may be spuriously long near the end of text. */
+        if (sp->match_length > len)
+    {
+            sp->match_length = len;
+    }
+
+        if (sp->match_length <= THRESHOLD)
+    {
+            sp->match_length = 1;  /* Not long enough match.  Send one byte. */
+            code_buf[0] |= mask;  /* 'send one byte' flag */
+            code_buf[code_buf_ptr++] = sp->text_buf[r];  /* Send uncoded. */
+        } else {
+            /* Send position and length pair. Note match_length > THRESHOLD. */
+            code_buf[code_buf_ptr++] = ((uint8_t)sp->match_position);
+            code_buf[code_buf_ptr++] = ((uint8_t)(((sp->match_position >> 4) & 0xF0) | (sp->match_length - (THRESHOLD + 1))));
+        }
+
+        if ((mask <<= 1) == 0) {  /* Shift mask left one bit. */
+            /* Send at most 8 units of code together */
+            for (i = 0; i < code_buf_ptr; i++)
+        {
+                if ((uint8_t *)(dst) < dstend)
+        {
+                    *(uint8_t *)(dst++) = code_buf[i];
+                } else {
+                    return (NULL);
+        }
+        }
+
+            code_buf[0] = 0;
+            code_buf_ptr = mask = 1;
+        }
+
+        last_match_length = sp->match_length;
+
+        for (i = 0; (i < last_match_length) && ((uint8_t *)(src) < srcend); i++)
+    {
+            delete_node(sp, (int)s);    /* Delete old strings and */
+            c = *(long *)(src++);
+            sp->text_buf[s] = c;    /* read new bytes */
+
+            /*
+             * If the position is near the end of buffer, extend the buffer
+             * to make string comparison easier.
+             */
+            if (s < F - 1)
+        {
+                sp->text_buf[s + N] = c;
+        }
+
+            /* Since this is a ring buffer, increment the position modulo N. */
+            s = (s + 1) & (N - 1);
+            r = (r + 1) & (N - 1);
+
+            /* Register the string in text_buf[r..r+F-1] */
+            insert_node(sp, (int)r);
+        }
+
+        while (i++ < last_match_length)
+    {
+            delete_node(sp, (int)s);
+
+            /* After the end of text, no need to read, */
+            s = (s + 1) & (N - 1);
+            r = (r + 1) & (N - 1);
+
+            /* but buffer may not be empty. */
+            if (--len)
+        {
+                insert_node(sp, (int)r);
+        }
+        }
+    } while (len > 0);   /* until length of string to be processed is zero */
+
+    if (code_buf_ptr > 1)
+    {    /* Send remaining code. */
+        for (i = 0; i < code_buf_ptr; i++)
+    {
+            if ((uint8_t *)(dst) < dstend)
+        {
+                *(uint8_t *)(dst++) = code_buf[i];
+            } else {
+                return (NULL);
+        }
+    }
+    }
+
+    return (dst);
+}
 
 size_t decompress_lzss(void *dstbuf, size_t dstlen, void *srcbuf, size_t srclen)
 {
@@ -1711,6 +2034,8 @@ int main(int argc, char **argv)
     int do_kext = 0;
     int do_list = 0;
     int do_dict = 0;
+    int do_recomp = 0;
+    int do_lzvn = 0;
 
     if (argc < 3)
     {
@@ -1735,6 +2060,16 @@ int main(int argc, char **argv)
             printf("Extracting kext dictionary info from prelinked kernel\n");
 
             do_dict = 1;
+        } else if (strncmp("-recomplzvn", argv[3], 11) == 0) {
+            printf("Recompressing prelinked kernel using LZVN");
+
+            do_recomp = 1;
+            do_lzvn = 1;
+        } else if (strncmp("-recomplzss", argv[3], 11) == 0) {
+            printf("Recompressing prelinked kernel using LZSS");
+
+            do_recomp = 1;
+            do_lzvn = 0;
         } else if ((targetcputype = cpu_type_for_name(argv[3])) != CPU_TYPE_ANY) {
             printf("Target architecture for operations: %s\n", argv[3]);
         }
@@ -1827,9 +2162,9 @@ int main(int argc, char **argv)
             }
         }
 
-        if ((do_dict == 0) && (do_kern == 0) && (do_kext == 0) && (do_list == 0))
+        if ((do_dict == 0) && (do_kern == 0) && (do_kext == 0) && (do_list == 0) && (do_recomp == 0))
         {
-            printf("ERROR: [-kernel|-kexts|-list|-dict] option is needed for a valid operation on a decompressed kernel cache\n");
+            printf("ERROR: [-kernel|-kexts|-list|-dict|-recomplzvn|-recomplzss] option is needed for a valid operation on a decompressed kernel cache\n");
 
             if (uncombuffer != NULL)
             {
@@ -1837,6 +2172,113 @@ int main(int argc, char **argv)
             }
 
             return -4;
+        }
+
+        if (do_recomp == 1)
+        {
+            PrelinkedKernelHeader khdr;
+            char *plkdata = NULL;
+            size_t plkdsize = 0;
+            char *workSpace = NULL;
+
+            if (do_lzvn == 1)
+            {
+                workSpace = malloc(lzvn_encode_work_size());
+
+                if (workSpace == NULL)
+                {
+                    printf("ERROR: Allocate work space error (%lu bytes needed)!\n", lzvn_encode_work_size());
+
+                    return -4;
+                }
+            }
+
+#if defined(__ppc__) || defined(__ppc64__)
+            khdr.signature = 0x636F6D70;
+            khdr.compressType = (do_lzvn == 1) ? 0x6C7A766E : 0x6C7A7373;
+            khdr.prelinkVersion = 0x1;
+#else
+            khdr.signature = 0x706D6F63;
+            khdr.compressType = (do_lzvn == 1) ? 0x6E767A6C : 0x73737A6C;
+            khdr.prelinkVersion = 0x1000000;
+#endif
+
+            adler32_cv = local_adler32(uncombuffer, (int32_t)uncombuflen);
+            khdr.adler32 = (swapped == 1) ? adler32_cv : OSSwapInt32(adler32_cv);
+
+            memset(khdr.reserved, 0, sizeof(khdr.reserved));
+            memset(khdr.platformName, 0, sizeof(khdr.platformName));
+            memset(khdr.rootPath, 0, sizeof(khdr.rootPath));
+
+            plkdsize = actuallen;
+
+            printf("Prelinked kernel size: %lu\n", plkdsize);
+
+            khdr.uncompressedSize = (swapped == 1) ? (uint32_t)actuallen : OSSwapInt32((uint32_t)actuallen);
+
+            plkdata = malloc(plkdsize);
+
+            if (do_lzvn == 1)
+            {
+                printf("Compressing using LZVN\n");
+
+                plkdsize = lzvn_encode(plkdata, plkdsize, (const void *)uncombuffer, uncombuflen, workSpace);
+
+                printf("Got LZVN data size (%lu)\n", plkdsize);
+            } else {
+                printf("Compressing using LZSS\n");
+
+                workSpace = compress_lzss(plkdata, plkdsize, (void *)uncombuffer, uncombuflen);
+
+                plkdsize = (size_t)(workSpace - plkdata);
+
+                printf("Got LZSS data size (%lu)\n", plkdsize);
+            }
+
+            if (plkdata == NULL)
+            {
+                printf("ERROR: Allocate compressed data error!\n");
+
+                return -4;
+            }
+
+            khdr.compressedSize = (swapped == 1) ? (uint32_t)plkdsize : OSSwapInt32((uint32_t)plkdsize);
+
+#if defined(_MSC_VER) && __STDC_WANT_SECURE_LIB__
+            fopen_s(&f, argv[2], "wb");
+#else
+            f = fopen(argv[2], "wb");
+#endif
+
+            if (f == NULL)
+            {
+                printf("ERROR: Opening output file");
+
+                return -4;
+            } else {
+                fwrite(&khdr, 1, sizeof(PrelinkedKernelHeader), f);
+                fwrite(plkdata, 1, plkdsize, f);
+                fclose(f);
+
+                if (plkdata != NULL)
+                {
+                    free(plkdata);
+                }
+
+                if (do_lzvn == 1)
+                {
+                    if (workSpace != NULL)
+                    {
+                        free(workSpace);
+                    }
+
+                    printf("Wrote LZVN compressed prelinked kernel\n");
+                } else {
+                    printf("Wrote LZSS compressed prelinked kernel\n");
+                }
+
+                return 0;
+            }
         }
     } else {
         fathdr = (fat_header_t *)buffer;
@@ -2106,7 +2548,7 @@ int main(int argc, char **argv)
             rv = (int)lzvn_decode(uncombuffer, (size_t)uncombuflen, combuffer, (size_t)combuflen);
         }
         
-        adler32_ck = (swapped == 1) ? OSSwapInt32(prelinkfile->adler32) : prelinkfile->adler32;
+        adler32_ck = (swapped == 0) ? OSSwapInt32(prelinkfile->adler32) : prelinkfile->adler32;
         
         if (buffer)
         {
@@ -2127,8 +2569,13 @@ int main(int argc, char **argv)
             return -9;
         }
         
-        adler32_cv = local_adler32(uncombuffer, (int32_t)uncombuflen);
-        
+        if (swapped == 1)
+        {
+            adler32_cv = OSSwapInt32(local_adler32(uncombuffer, (int32_t)uncombuflen));
+        } else {
+            adler32_cv = local_adler32(uncombuffer, (int32_t)uncombuflen);
+        }
+
         if (adler32_cv != adler32_ck)
         {
             printf("ERROR: Checksum (adler32) mismatch (0x%.8X != 0x%.8X)\n", adler32_cv, adler32_ck);

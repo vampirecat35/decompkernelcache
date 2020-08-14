@@ -45,11 +45,10 @@ IOCFUnserialize.c: IOCFUnserialize.yacc
 	$(YACC) -o $@ $<
 
 lzvndec.o: lzvndec.c
-lzvn_size.o: lzvn_size.c
 lzvn_encode.o: lzvn_encode.c
 IOCFUnserialize.o: IOCFUnserialize.c
 
-liblzvn.a: lzvndec.o lzvn_size.o lzvn_encode.o
+liblzvn.a: lzvndec.o lzvn_encode.o
 	$(AR) $(ARFLAGS) $@ $^
 	$(RANLIB) liblzvn.a
 

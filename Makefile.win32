@@ -42,11 +42,10 @@ decompkernelcacheres.o: decompkernelcache.rc
 	$(WINDRES) -o $@ $<
 
 lzvndec.o: lzvndec.c
-lzvn_size.o: lzvn_size.c
 lzvn_encode.o: lzvn_encode.c
 IOCFUnserialize.o: WINSUPSRC/IOCFUnserialize.c
 
-liblzvn.a: lzvndec.o lzvn_size.o lzvn_encode.o
+liblzvn.a: lzvndec.o lzvn_encode.o
 	$(AR) $(ARFLAGS) $@ $^
 	$(RANLIB) liblzvn.a
 

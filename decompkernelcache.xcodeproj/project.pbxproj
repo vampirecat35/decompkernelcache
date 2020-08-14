@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		ABFB7ECD243B3C8E001383A1 /* lzvn_size.c in Sources */ = {isa = PBXBuildFile; fileRef = ABFB7ECB243B3C8E001383A1 /* lzvn_size.c */; };
 		ABFB7ECE243B3C8E001383A1 /* lzvn_encode.c in Sources */ = {isa = PBXBuildFile; fileRef = ABFB7ECC243B3C8E001383A1 /* lzvn_encode.c */; };
 		ABFB7ED0243B3C9A001383A1 /* lzvn.h in Headers */ = {isa = PBXBuildFile; fileRef = ABFB7ECF243B3C9A001383A1 /* lzvn.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		ABFB7ED5243B3D6A001383A1 /* decompkernelcache.c in Sources */ = {isa = PBXBuildFile; fileRef = ABFB7ED4243B3D6A001383A1 /* decompkernelcache.c */; };
@@ -50,7 +49,6 @@
 /* Begin PBXFileReference section */
 		AB9AA604243B3BD900EECAED /* decompkernelcache */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = decompkernelcache; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABFB7EC2243B3C57001383A1 /* liblzvn.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblzvn.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		ABFB7ECB243B3C8E001383A1 /* lzvn_size.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lzvn_size.c; sourceTree = "<group>"; };
 		ABFB7ECC243B3C8E001383A1 /* lzvn_encode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lzvn_encode.c; sourceTree = "<group>"; };
 		ABFB7ECF243B3C9A001383A1 /* lzvn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lzvn.h; sourceTree = "<group>"; };
 		ABFB7ED3243B3CFC001383A1 /* decompkernelcache.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = decompkernelcache.plist; sourceTree = "<group>"; };
@@ -105,7 +103,6 @@
 			isa = PBXGroup;
 			children = (
 				ABFB7ECC243B3C8E001383A1 /* lzvn_encode.c */,
-				ABFB7ECB243B3C8E001383A1 /* lzvn_size.c */,
 				ABFB7ED8243B3ECD001383A1 /* lzvndec.c */,
 				ABFB7ECF243B3C9A001383A1 /* lzvn.h */,
 			);
@@ -196,7 +193,7 @@
 		AB9AA5FC243B3BD900EECAED /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "Vampire Cat";
 				TargetAttributes = {
 					AB9AA603243B3BD900EECAED = {
@@ -239,7 +236,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ABFB7ECD243B3C8E001383A1 /* lzvn_size.c in Sources */,
 				ABFB7ED9243B3ECD001383A1 /* lzvndec.c in Sources */,
 				ABFB7ECE243B3C8E001383A1 /* lzvn_encode.c in Sources */,
 			);
@@ -290,6 +286,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -361,6 +358,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -399,6 +397,7 @@
 		AB9AA60C243B3BD900EECAED /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CURRENT_PROJECT_VERSION = 2.1;
 				DYLIB_COMPATIBILITY_VERSION = 1.0;
 				DYLIB_CURRENT_VERSION = 2.1;
@@ -413,6 +412,7 @@
 		AB9AA60D243B3BD900EECAED /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CURRENT_PROJECT_VERSION = 2.1;
 				DYLIB_COMPATIBILITY_VERSION = 1.0;
 				DYLIB_CURRENT_VERSION = 2.1;

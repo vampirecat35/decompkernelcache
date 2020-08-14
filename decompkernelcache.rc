@@ -17,8 +17,8 @@ mainicon ICON DISCARDABLE "decompkernelcache.ico"
 //
 IDI_MAINICON		ICON 		"decompkernelcache.ico"
 VS_VERSION_INFO		VERSIONINFO
-FILEVERSION		2,2,0,0
-PRODUCTVERSION    	2,2,0,0
+FILEVERSION		2,3,0,0
+PRODUCTVERSION    	2,3,0,0
 FILEFLAGSMASK		VS_FFI_FILEFLAGSMASK
 #ifdef _DEBUG
 FILEFLAGS		1
@@ -35,12 +35,12 @@ BEGIN
     BEGIN
       VALUE "FileDescription",	"AnV LZVN/LZSS prelinked kernel/kernelcache decompressor (Windows)\0"
       VALUE "CompanyName", "AnV Software"
-      VALUE "FileVersion",	"2.2\0"
+      VALUE "FileVersion",	"2.3\0"
       VALUE "InternalName",	"decompkernelcache.exe\0"
       VALUE "LegalCopyright",	"(C) 2014-2020 AnV Software, all rights reserved\0"
       VALUE "OriginalFilename",	"decompkernelcache.exe\0"
       VALUE "ProductName",	"decompkernelcache\0"
-      VALUE "ProductVersion",	"2.2\0"
+      VALUE "ProductVersion",	"2.3\0"
       VALUE "Comments",		"For more information visit InsanelyMac (https://www.insanelymac.com/forum/topic/340419-decompkernelcache-22-kernel-cache-extraction-tool-for-macosx-and-windows-32-and-64-bit)\0"
     END
   END
