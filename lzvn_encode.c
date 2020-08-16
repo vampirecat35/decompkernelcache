@@ -24,6 +24,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "lzvn_encode.h"
 #include <memory.h>
 
+#if defined(_MSC_VER)
+#include <intrin.h>
+#elif defined(__INTEL_COMPILER)
+#include <immintrin.h>
+#endif
+
 static inline uint32_t load4(const void *ptr) {
   uint32_t data = 0;
   memcpy(&data, ptr, sizeof data);
@@ -223,8 +229,9 @@ static inline uint32_t hash3i(uint32_t i) {
 /*! @abstract Return the number [0, 4] of zero bytes in \p x, starting from the
  * least significant byte. */
 static inline lzvn_offset trailing_zero_bytes(uint32_t x) {
-#if defined(_MSC_VER)
-  return (x == 0) ? 4 : (__lzcnt((unsigned int)x) >> 3);
+#if defined(__INTEL_COMPILER) || (defined(_MSC_VER) && (_MSC_VER >= 1700) && \
+                                    (defined(__BMI__) || !defined(__clang__)))
+  return (x == 0) ? 4 : (_tzcnt_u32(x) >> 3);
 #else
   return (x == 0) ? 4 : (__builtin_ctzl(x) >> 3);
 #endif
