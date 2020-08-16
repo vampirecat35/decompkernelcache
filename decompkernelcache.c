@@ -2069,12 +2069,12 @@ int main(int argc, char **argv)
 
             do_dict = 1;
         } else if (strncmp("-recomplzvn", argv[3], 11) == 0) {
-            printf("Recompressing prelinked kernel using LZVN");
+            printf("Recompressing prelinked kernel using LZVN\n");
 
             do_recomp = 1;
             do_lzvn = 1;
         } else if (strncmp("-recomplzss", argv[3], 11) == 0) {
-            printf("Recompressing prelinked kernel using LZSS");
+            printf("Recompressing prelinked kernel using LZSS\n");
 
             do_recomp = 1;
             do_lzvn = 0;
