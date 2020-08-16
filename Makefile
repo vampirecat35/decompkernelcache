@@ -38,6 +38,7 @@ all: decompkernelcache
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 
+WINSUPSRC/IOCFUnserialize.o: WINSUPSRC/IOCFUnserialize.c
 lzvndec.o: lzvndec.c
 lzvn_encode.o: lzvn_encode.c
 
@@ -45,12 +46,12 @@ liblzvn.a: lzvndec.o lzvn_encode.o
 	$(AR) $(ARFLAGS) $@ lzvndec.o lzvn_encode.o
 	$(RANLIB) liblzvn.a
 
-decompkernelcache: decompkernelcache.o liblzvn.a
-	$(CC) $(CFLAGS) -o $@ decompkernelcache.o $(LIBS)
+decompkernelcache: decompkernelcache.o WINSUPSRC/IOCFUnserialize.o liblzvn.a
+	$(CC) $(CFLAGS) -o $@ decompkernelcache.o WINSUPSRC/IOCFUnserialize.o $(LIBS)
 	$(CODESIGN) -s "$(CSIDENT)" $@
 
 clean:
-	rm -f *.o liblzvn.a decompkernelcache
+	rm -f *.o WINSUPSRC/IOCFUnserialize.o liblzvn.a decompkernelcache
 
 install: decompkernelcache lzvn.h liblzvn.a
 	$(INSTALL) decompkernelcache $(PREFIX)/bin
