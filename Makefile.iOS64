@@ -8,7 +8,7 @@
 
 PREFIX=/usr/local
 LIBPREFIX=iOS
-XCODEPATH=/Applications/Xcode.app
+XCODEPATH=/Applications/Xcode-beta.app
 PLATFORM=iPhoneOS.platform
 SDK=iPhoneOS.sdk
 SDKPREFIX=$(XCODEPATH)/Contents/Developer/Platforms/$(PLATFORM)/Developer/SDKs/$(SDK)
@@ -20,10 +20,10 @@ RANLIB=ranlib
 YACC=/usr/bin/bison -y
 CODESIGN=codesign
 CSIDENT=-
-LIBS=-L. -llzvn -F$(SDKPREFIX)/System/Library/Frameworks -L$(SDKPREFIX)/usr/lib -framework CoreFoundation
+LIBS=-nostdlib -L. -llzvn -F$(SDKPREFIX)/System/Library/Frameworks -L$(SDKPREFIX)/usr/lib -framework CoreFoundation -lSystem
 INSTALL=install
 ARFLAGS=cru
-CFLAGS=-arch arm64 -Os
+CFLAGS=-arch arm64 -Os -mios-version-min=13.0 -isysroot $(XCODEPATH)/Contents/Developer/Platforms/$(PLATFORM)/Developer/SDKs/$(SDK)
 ASFLAGS=$(CFLAGS)
 
 all: decompkernelcache

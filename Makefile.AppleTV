@@ -8,7 +8,7 @@
 
 PREFIX=/usr/local
 LIBPREFIX=iOS
-XCODEPATH=/Applications/Xcode.app
+XCODEPATH=/Applications/Xcode-beta.app
 PLATFORM=AppleTVOS.platform
 SDK=AppleTVOS.sdk
 SDKPREFIX=$(XCODEPATH)/Contents/Developer/Platforms/$(PLATFORM)/Developer/SDKs/$(SDK)
@@ -20,10 +20,10 @@ RANLIB=ranlib
 YACC=/usr/bin/bison -y
 CODESIGN=codesign
 CSIDENT=-
-LIBS=-L. -llzvn -F$(SDKPREFIX)/System/Library/Frameworks -L$(SDKPREFIX)/usr/lib -framework CoreFoundation
+LIBS=-nostdlib -L. -llzvn -F$(SDKPREFIX)/System/Library/Frameworks -L$(SDKPREFIX)/usr/lib -framework CoreFoundation -lSystem
 INSTALL=install
 ARFLAGS=cru
-CFLAGS=-arch arm64 -mtvos-version-min=9.0 -Os
+CFLAGS=-arch arm64 -mtvos-version-min=9.0 -Os -isysroot $(XCODEPATH)/Contents/Developer/Platforms/$(PLATFORM)/Developer/SDKs/$(SDK)
 ASFLAGS=$(CFLAGS)
 
 all: decompkernelcache
@@ -40,10 +40,10 @@ all: decompkernelcache
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 
-IOCFUnserialize.c: IOCFUnserialize.yacc
-	$(YACC) -o $@ $<
+#IOCFUnserialize.c: IOCFUnserialize.yacc
+#	$(YACC) -o $@ $<
 
-IOCFUnserialize.o: IOCFUnserialize.c
+WINSUPSRC/IOCFUnserialize.o: WINSUPSRC/IOCFUnserialize.c
 lzvndec.o: lzvndec.c
 lzvn_encode.o: lzvn_encode.c
 
@@ -51,12 +51,12 @@ liblzvn.a: lzvndec.o lzvn_encode.o
 	$(AR) $(ARFLAGS) $@ lzvndec.o lzvn_encode.o
 	$(RANLIB) liblzvn.a
 
-decompkernelcache: decompkernelcache.o IOCFUnserialize.o liblzvn.a
-	$(CC) $(CFLAGS) -o $@ decompkernelcache.o IOCFUnserialize.o $(LIBS)
+decompkernelcache: decompkernelcache.o WINSUPSRC/IOCFUnserialize.o liblzvn.a
+	$(CC) $(CFLAGS) -o $@ decompkernelcache.o WINSUPSRC/IOCFUnserialize.o $(LIBS)
 	$(CODESIGN) -s "$(CSIDENT)" $@
 
 clean:
-	rm -f *.o IOCFUnserialize.c liblzvn.a decompkernelcache
+	rm -f *.o WINSUPSRC/IOCFUnserialize.o liblzvn.a decompkernelcache
 
 install: decompkernelcache lzvn.h liblzvn.a
 	$(INSTALL) decompkernelcache $(PREFIX)/bin

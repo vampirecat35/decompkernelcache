@@ -1003,7 +1003,7 @@ uint8_t saveKernel(unsigned char *aFileBuffer, const char *outfile)
 #endif
         }
 
-        fwrite(aFileBuffer, 1, (size_t)(((swapped == 0) ? linkeditSegment32->fileoff : OSSwapInt32(linkeditSegment32->fileoff)) + ((swapped == 0) ? linkeditSegment32->filesize : OSSwapInt32(linkeditSegment32->filesize))), fp);
+        fwrite(aFileBuffer, 1, (size_t)(((swapped == 0) ? linkeditSegment32->fileoff : (size_t)OSSwapInt32(linkeditSegment32->fileoff)) + ((size_t)(swapped == 0) ? linkeditSegment32->filesize : OSSwapInt32(linkeditSegment32->filesize))), fp);
         printf("%ld bytes written\n", ftell(fp));
         fclose(fp);
     } else {
@@ -1626,7 +1626,7 @@ static void init_state(struct encode_state *sp)
     return;
     }
 
-    bzero(sp, sizeof(*sp));
+    memset(sp, 0, sizeof(*sp));
 
     for (i = 0; i < (N - F); i++)
     {
@@ -1686,11 +1686,11 @@ static void insert_node(struct encode_state *sp, int r)
         }
         }
 
-        if (i > sp->match_length)
+        if (i > (size_t)sp->match_length)
     {
             sp->match_position = p;
 
-            if ((sp->match_length = i) >= F)
+            if ((sp->match_length = (long)i) >= F)
         {
                 break;
         }
@@ -1796,7 +1796,9 @@ void *compress_lzss(void *dst, size_t dstlen, void *src, size_t srcLen)
     /* Read F bytes into the last F bytes of the buffer */
     for (len = 0; (len < F) && ((uint8_t *)(src) < srcend); len++)
     {
-        sp->text_buf[r + len] = *(uint8_t *)(src++);
+        uint8_t* srcptr = src;
+        sp->text_buf[r + len] = *(uint8_t *)(srcptr++);
+        src = srcptr;
     }
 
     if (len == 0)
@@ -1845,7 +1847,9 @@ void *compress_lzss(void *dst, size_t dstlen, void *src, size_t srcLen)
         {
                 if ((uint8_t *)(dst) < dstend)
         {
-                    *(uint8_t *)(dst++) = code_buf[i];
+                    uint8_t* dstptr = dst;
+                    *(uint8_t *)(dstptr++) = code_buf[i];
+                    dst = dstptr;
                 } else {
                     return (NULL);
         }
@@ -1860,8 +1864,10 @@ void *compress_lzss(void *dst, size_t dstlen, void *src, size_t srcLen)
         for (i = 0; (i < last_match_length) && ((uint8_t *)(src) < srcend); i++)
     {
             delete_node(sp, (int)s);    /* Delete old strings and */
-            c = *(long *)(src++);
-            sp->text_buf[s] = c;    /* read new bytes */
+            uint8_t* srcptr = src;
+            c = *(long *)(srcptr++);
+            src = srcptr;
+            sp->text_buf[s] = (uint8_t)c;    /* read new bytes */
 
             /*
              * If the position is near the end of buffer, extend the buffer
@@ -1869,7 +1875,7 @@ void *compress_lzss(void *dst, size_t dstlen, void *src, size_t srcLen)
              */
             if (s < F - 1)
         {
-                sp->text_buf[s + N] = c;
+                sp->text_buf[s + N] = (uint8_t)c;
         }
 
             /* Since this is a ring buffer, increment the position modulo N. */
@@ -1902,7 +1908,9 @@ void *compress_lzss(void *dst, size_t dstlen, void *src, size_t srcLen)
     {
             if ((uint8_t *)(dst) < dstend)
         {
-                *(uint8_t *)(dst++) = code_buf[i];
+                uint8_t* dstptr = dst;
+                *(uint8_t *)(dstptr++) = code_buf[i];
+                dst = dstptr;
             } else {
                 return (NULL);
         }
@@ -2187,7 +2195,7 @@ int main(int argc, char **argv)
 
                 if (workSpace == NULL)
                 {
-                    printf("ERROR: Allocate work space error (%lu bytes needed)!\n", lzvn_encode_work_size());
+                    printf("ERROR: Allocate work space error (%lu bytes needed)!\n", (unsigned long)lzvn_encode_work_size());
 
                     return -4;
                 }
@@ -2212,7 +2220,7 @@ int main(int argc, char **argv)
 
             plkdsize = actuallen;
 
-            printf("Prelinked kernel size: %lu\n", plkdsize);
+            printf("Prelinked kernel size: %lu\n", (unsigned long)plkdsize);
 
             khdr.uncompressedSize = (swapped == 1) ? (uint32_t)actuallen : OSSwapInt32((uint32_t)actuallen);
 
@@ -2224,7 +2232,7 @@ int main(int argc, char **argv)
 
                 plkdsize = lzvn_encode(plkdata, plkdsize, (const void *)uncombuffer, uncombuflen, workSpace);
 
-                printf("Got LZVN data size (%lu)\n", plkdsize);
+                printf("Got LZVN data size (%lu)\n", (unsigned long)plkdsize);
             } else {
                 printf("Compressing using LZSS\n");
 
@@ -2232,7 +2240,7 @@ int main(int argc, char **argv)
 
                 plkdsize = (size_t)(workSpace - plkdata);
 
-                printf("Got LZSS data size (%lu)\n", plkdsize);
+                printf("Got LZSS data size (%lu)\n", (unsigned long)plkdsize);
             }
 
             if (plkdata == NULL)
@@ -2307,7 +2315,7 @@ int main(int argc, char **argv)
                 prelinkfile = (PrelinkedKernelHeader *)((unsigned char *)buffer + OSSwapInt32(fatarch->offset));
             }
 
-            while ((ac < OSSwapInt32(fathdr->nfat_arch)) && ((prelinkfile->signature != 0x706D6F63) || (prelinkfile->signature != 0x636F6D70)))
+            while ((ac < OSSwapInt32(fathdr->nfat_arch)) && ((prelinkfile->signature != 0x706D6F63) | (prelinkfile->signature != 0x636F6D70)))
             {
                 fatarch = (fat_arch_t *)((unsigned char *)fatarch + sizeof(fat_arch_t));
                 
