@@ -1148,9 +1148,9 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
 
     if ((prelinkTextSegment64) && (prelinkInfoSegment64) && (is32bit == 0))
     {
-        printf("prelinkInfoSegment64->vmaddr..: 0x%llx\n", ((swapped == 0) ? prelinkInfoSegment64->vmaddr : OSSwapInt64(prelinkInfoSegment64->vmaddr))) ;
-        printf("prelinkInfoSegment64->fileoff.: 0x%llx\n", ((swapped == 0) ? prelinkInfoSegment64->fileoff : OSSwapInt64(prelinkInfoSegment64->fileoff)));
-        printf("prelinkInfoSegment64->filesize: 0x%llx\n", ((swapped == 0) ? prelinkInfoSegment64->filesize : OSSwapInt64(prelinkInfoSegment64->filesize)));
+        printf("prelinkInfoSegment64->vmaddr..: 0x%llx\n", ((swapped == 0) ? (unsigned long long)prelinkInfoSegment64->vmaddr : (unsigned long long)OSSwapInt64(prelinkInfoSegment64->vmaddr))) ;
+        printf("prelinkInfoSegment64->fileoff.: 0x%llx\n", ((swapped == 0) ? (unsigned long long)prelinkInfoSegment64->fileoff : (unsigned long long)OSSwapInt64(prelinkInfoSegment64->fileoff)));
+        printf("prelinkInfoSegment64->filesize: 0x%llx\n", ((swapped == 0) ? (unsigned long long)prelinkInfoSegment64->filesize : (unsigned long long)OSSwapInt64(prelinkInfoSegment64->filesize)));
 
         const char *prelinkInfoBytes = (const char *)aFileBuffer + ((swapped == 0) ? prelinkInfoSegment64->fileoff : OSSwapInt64(prelinkInfoSegment64->fileoff));
             
@@ -1255,7 +1255,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                             CFNumberGetValue(kextSourceAddress, kCFNumberSInt64Type, &sourceAddress);
                             offset = ((sourceAddress - ((swapped == 0) ? prelinkTextSegment64->vmaddr : OSSwapInt64(prelinkTextSegment64->vmaddr))) + ((swapped == 0) ? prelinkTextSegment64->fileoff : OSSwapInt64(prelinkTextSegment64->fileoff)));
 
-                            printf("_PrelinkExecutableSourceAddr64..: 0x%llx -> 0x%llx/%lld (offset)\n", sourceAddress, offset, offset);
+                            printf("_PrelinkExecutableSourceAddr64..: 0x%llx -> 0x%llx/%lld (offset)\n", (unsigned long long)sourceAddress, (unsigned long long)offset, (unsigned long long)offset);
                         }
                         
                         CFNumberRef kextSourceSize = (CFNumberRef)CFDictionaryGetValue(kextPlist, CFSTR(kPrelinkExecutableSizeKey));
@@ -1263,7 +1263,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                         if (kextSourceSize != NULL)
                         {
                             CFNumberGetValue(kextSourceSize, kCFNumberSInt64Type, &sourceSize);
-                            printf("_PrelinkExecutableSize........: 0x%llx/%lld\n", sourceSize, sourceSize);
+                            printf("_PrelinkExecutableSize........: 0x%llx/%lld\n", (unsigned long long)sourceSize, (unsigned long long)sourceSize);
                         }
 
                         machHeader = (struct mach_header *)((unsigned char *)(uintptr_t)aFileBuffer + offset);
@@ -1433,7 +1433,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                         {
                             CFNumberGetValue(kextSourceAddress, kCFNumberSInt64Type, &sourceAddress);
                             offset = ((sourceAddress - prelinkTextSegment32->vmaddr) + prelinkTextSegment32->fileoff);
-                            printf("_PrelinkExecutableSourceAddr32..: 0x%llx -> 0x%llx/%lld (offset)\n", sourceAddress, offset, offset);
+                            printf("_PrelinkExecutableSourceAddr32..: 0x%llx -> 0x%llx/%lld (offset)\n", (unsigned long long)sourceAddress, (unsigned long long)offset, (unsigned long long)offset);
                         }
                         
                         CFNumberRef kextSourceSize = (CFNumberRef)CFDictionaryGetValue(kextPlist, CFSTR(kPrelinkExecutableSizeKey));
@@ -1441,7 +1441,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                         if (kextSourceSize != NULL)
                         {
                             CFNumberGetValue(kextSourceSize, kCFNumberSInt64Type, &sourceSize);
-                            printf("_PrelinkExecutableSize........: 0x%llx/%lld\n", sourceSize, sourceSize);
+                            printf("_PrelinkExecutableSize........: 0x%llx/%lld\n", (unsigned long long)sourceSize, (unsigned long long)sourceSize);
                         }
 
                         machHeader = (struct mach_header *)((unsigned char *)(uintptr_t)aFileBuffer + offset);

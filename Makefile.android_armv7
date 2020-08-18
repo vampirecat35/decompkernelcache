@@ -12,7 +12,7 @@ CPU=$(shell uname -m)
 PLATFORM=darwin
 ANDROID_CPU=arm
 ANDROID_VERSION=23
-ANDROID_NDK_PATH=$(HOME)/Downloads/android-ndk-r21b
+ANDROID_NDK_PATH=$(HOME)/Downloads/android-ndk-r21d
 ANDROID_TOOLCHAIN_DIR=$(ANDROID_NDK_PATH)/toolchains/llvm/prebuilt/$(PLATFORM)-$(CPU)/bin
 SYSROOT_DIR=$(ANDROID_NDK_PATH)/toolchains/llvm/prebuilt/$(PLATFORM)-$(CPU)/sysroot/usr
 
