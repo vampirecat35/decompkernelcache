@@ -8,7 +8,7 @@
 
 PREFIX=/usr/local
 LIBPREFIX=iOS
-XCODEPATH=/Applications/Xcode-beta.app
+XCODEPATH=/Applications/Xcode.app
 PLATFORM=WatchOS.platform
 SDK=WatchOS.sdk
 SDKPREFIX=$(XCODEPATH)/Contents/Developer/Platforms/$(PLATFORM)/Developer/SDKs/$(SDK)
