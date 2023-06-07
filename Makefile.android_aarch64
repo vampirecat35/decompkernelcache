@@ -9,18 +9,18 @@
 PREFIX=/usr/local
 LIBPREFIX=AndroidAARCH64
 CPU=$(shell uname -m)
-PLATFORM=darwin
+PLATFORM=linux
 ANDROID_CPU=aarch64
-ANDROID_VERSION=23
-ANDROID_NDK_PATH=$(HOME)/Downloads/android-ndk-r21d
+ANDROID_VERSION=31
+ANDROID_NDK_PATH=/usr/local/android-studio/plugins/android-ndk
 ANDROID_TOOLCHAIN_DIR=$(ANDROID_NDK_PATH)/toolchains/llvm/prebuilt/$(PLATFORM)-$(CPU)/bin
 SYSROOT_DIR=$(ANDROID_NDK_PATH)/toolchains/llvm/prebuilt/$(PLATFORM)-$(CPU)/sysroot/usr
 
 NASM=nasm
 CC=$(ANDROID_TOOLCHAIN_DIR)/aarch64-linux-android$(ANDROID_VERSION)-clang -I$(SYSROOT_DIR)/include -I$(SYSROOT_DIR)/include/$(ANDROID_CPU)-linux-androideabi -I$(LIBPREFIX)/include
 YACC=$(LIBPREFIX)/bin/bison -y
-AR=$(ANDROID_TOOLCHAIN_DIR)/$(ANDROID_CPU)-linux-android-ar
-RANLIB=$(ANDROID_TOOLCHAIN_DIR)/$(ANDROID_CPU)-linux-android-ranlib
+AR=$(ANDROID_TOOLCHAIN_DIR)/llvm-ar
+RANLIB=$(ANDROID_TOOLCHAIN_DIR)/llvm-ranlib
 LIBS=-L. -llzvn -L"$(LIBPREFIX)/lib" -L"$(SYSROOT_DIR)/lib/$(ANDROID_CPU)-linux-android/$(ANDROID_VERSION)" -lCoreFoundation -licuuc -licudata -licui18n -lBlocksRuntime -ldispatch -lstdc++ -lkqueue -lc -lm -lcompiler_rt-extras
 INSTALL=install
 ARFLAGS=cru
