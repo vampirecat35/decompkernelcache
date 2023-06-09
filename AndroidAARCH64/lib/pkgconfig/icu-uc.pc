@@ -8,10 +8,10 @@ CFLAGS =
 CXXFLAGS =  -std=c++11
 # DEFS only contains those UCONFIG_CPPFLAGS which are not auto-set by platform.h
 DEFS = 
-prefix = /usr/local/android-studio/plugins/android-ndk
+prefix = /usr/local/android-studio/plugins/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr
 exec_prefix = ${prefix}
 #bindir = ${exec_prefix}/bin
-libdir = ${exec_prefix}/lib
+libdir = /usr/local/android-studio/plugins/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android
 includedir = ${prefix}/include
 baselibs = -lm 
 #datarootdir = ${prefix}/share
@@ -27,7 +27,7 @@ LIBICU=lib${ICUPREFIX}
 pkglibdir=${libdir}/icu${ICULIBSUFFIX}/73.1
 #pkgdatadir=${datadir}/icu${ICULIBSUFFIX}/73.1
 ICUDATA_NAME = icudt73l
-#ICUPKGDATA_DIR=${exec_prefix}/lib
+#ICUPKGDATA_DIR=/usr/local/android-studio/plugins/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android
 #ICUDATA_DIR=${pkgdatadir}
 ICUDESC=International Components for Unicode
 

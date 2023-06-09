@@ -31,7 +31,12 @@
 
 #if !defined(CF_EXCLUDE_CSTD_HEADERS)
 
+#if defined(__linux__) || defined(__ANDROID__)
+#include <linux/types.h>
+#else
 #include <sys/types.h>
+#endif
+
 #include <stdarg.h>
 #include <assert.h>
 #include <ctype.h>

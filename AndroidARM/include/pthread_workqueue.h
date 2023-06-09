@@ -52,6 +52,8 @@ typedef struct {
 #define WORKQ_DEFAULT_PRIOQUEUE    1
 #define WORKQ_LOW_PRIOQUEUE        2
 #define WORKQ_BG_PRIOQUEUE         3
+#define WORKQ_BG_PRIOQUEUE_CONDITIONAL        4
+#define WORKQ_HIGH_PRIOQUEUE_CONDITIONAL       5
 
 #if defined(__cplusplus)
 	extern "C" {
@@ -91,7 +93,9 @@ int _PWQ_EXPORT pthread_workqueue_init_np(void);
 unsigned long _PWQ_EXPORT pthread_workqueue_peek_np(const char *);
 void _PWQ_EXPORT pthread_workqueue_suspend_np(void);
 void _PWQ_EXPORT pthread_workqueue_resume_np(void);
+void _PWQ_EXPORT pthread_workqueue_signal_np(void);
 
+//void _PWQ_EXPORT (*libpwq_thread_cleanup_handler)();
 #if defined(__cplusplus)
 	}
 #endif

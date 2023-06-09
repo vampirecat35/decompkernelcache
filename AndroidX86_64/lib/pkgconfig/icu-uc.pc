@@ -8,10 +8,10 @@ CFLAGS =
 CXXFLAGS =  -std=c++11
 # DEFS only contains those UCONFIG_CPPFLAGS which are not auto-set by platform.h
 DEFS = 
-prefix = /Users/andyvand/Downloads/android-ndk-r21b/x86_64_prefix
+prefix = /usr/local/android-studio/plugins/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr
 exec_prefix = ${prefix}
 #bindir = ${exec_prefix}/bin
-libdir = ${exec_prefix}/lib
+libdir = /usr/local/android-studio/plugins/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android
 includedir = ${prefix}/include
 baselibs = -lm 
 #datarootdir = ${prefix}/share
@@ -19,19 +19,19 @@ baselibs = -lm
 #sbindir = ${exec_prefix}/sbin
 #mandir = ${datarootdir}/man
 #sysconfdir = ${prefix}/etc
-UNICODE_VERSION=13.0
+UNICODE_VERSION=15.0
 ICUPREFIX=icu
 ICULIBSUFFIX=
 LIBICU=lib${ICUPREFIX}
 #SHAREDLIBCFLAGS=-fPIC
-pkglibdir=${libdir}/icu${ICULIBSUFFIX}/66.1
-#pkgdatadir=${datadir}/icu${ICULIBSUFFIX}/66.1
-ICUDATA_NAME = icudt66l
-#ICUPKGDATA_DIR=${exec_prefix}/lib
+pkglibdir=${libdir}/icu${ICULIBSUFFIX}/73.1
+#pkgdatadir=${datadir}/icu${ICULIBSUFFIX}/73.1
+ICUDATA_NAME = icudt73l
+#ICUPKGDATA_DIR=/usr/local/android-studio/plugins/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android
 #ICUDATA_DIR=${pkgdatadir}
 ICUDESC=International Components for Unicode
 
-Version: 66.1
+Version: 73.1
 Cflags: -I${includedir}
 # end of icu.pc.in
 Description: International Components for Unicode: Common and Data libraries

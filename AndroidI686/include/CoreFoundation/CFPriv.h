@@ -306,7 +306,7 @@ extern UniChar __CFCharToUniCharTable[256];
 
 
 #if defined(CF_INLINE)
-#if defined(__i386__)
+#if (defined(__i386__) || defined(__arm__) || defined(__aarch64__)) && defined(_OLD_ANDROID)
 CF_INLINE const UniChar *CFStringGetCharactersPtrFromInlineBuffer(CFStringInlineBuffer *buf, CFRange desiredRange) {
     if ((desiredRange.location < 0) || ((desiredRange.location + desiredRange.length) > buf->rangeToBuffer.length)) return NULL;
 
@@ -609,10 +609,6 @@ CF_EXPORT void CFMessagePortSetCloneCallout(CFMessagePortRef ms, CFMessagePortCa
 
 CF_EXPORT CFMessagePortRef CFMessagePortCreatePerProcessLocal(CFAllocatorRef allocator, CFStringRef name, CFMessagePortCallBack callout, CFMessagePortContext *context, Boolean *shouldFreeInfo);
 CF_EXPORT CFMessagePortRef CFMessagePortCreatePerProcessRemote(CFAllocatorRef allocator, CFStringRef name, CFIndex pid);
-
-#ifndef HALT
-#define HALT exit(-1)
-#endif
 
 typedef CFDataRef (*CFMessagePortCallBackEx)(CFMessagePortRef local, SInt32 msgid, CFDataRef data, void *info, void *trailer, uintptr_t);
 

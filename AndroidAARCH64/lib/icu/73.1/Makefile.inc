@@ -27,9 +27,9 @@
 # etc.  If ICU is not installed in this directory, you must change the
 # following line.  There should exist $(prefix)/include/unicode/utypes.h
 # for example.
-prefix = /usr/local/android-studio/plugins/android-ndk
+prefix = /usr/local/android-studio/plugins/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr
 exec_prefix = ${prefix}
-libdir = ${exec_prefix}/lib
+libdir = /usr/local/android-studio/plugins/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android
 libexecdir = ${exec_prefix}/libexec
 bindir = ${exec_prefix}/bin
 datarootdir = ${prefix}/share
