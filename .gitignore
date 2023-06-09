@@ -1,2 +1,7 @@
 
 .DS_Store
+*.o
+WINSUPSRC/*.o
+decompkernelcache
+*.a
+
