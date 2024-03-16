@@ -1,0 +1,64 @@
+##
+#
+# AnV LZVN/LZSS kernel cache decompressor V1.0
+#
+# VisionOS 64-bit (ARM64) version
+#
+##
+
+PREFIX=/usr/local
+LIBPREFIX=iOS
+XCODEPATH=/Applications/Xcode.app
+PLATFORM=XROS.platform
+SDK=XROS.sdk
+SDKPREFIX=$(XCODEPATH)/Contents/Developer/Platforms/$(PLATFORM)/Developer/SDKs/$(SDK)
+
+NASM=nasm
+CC=clang -I$(LIBPREFIX)/include -F$(SDKPREFIX)/System/Library/Frameworks -I$(SDKPREFIX)/usr/include
+AR=ar
+RANLIB=ranlib
+YACC=/usr/bin/bison -y
+CODESIGN=codesign
+CSIDENT=-
+LIBS=-nostdlib -L. -llzvn -F$(SDKPREFIX)/System/Library/Frameworks -L$(SDKPREFIX)/usr/lib -framework CoreFoundation -lSystem
+INSTALL=install
+ARFLAGS=cru
+CFLAGS=-arch arm64 -Os -isysroot $(XCODEPATH)/Contents/Developer/Platforms/$(PLATFORM)/Developer/SDKs/$(SDK)
+ASFLAGS=$(CFLAGS)
+
+all: decompkernelcache
+
+# .asm.o:
+#	$(NASM) -o $@ -f macho64 $<
+
+# .s.o:
+#	$(CC) $(ASFLAGS) -c $< -o $@
+
+# .S.o:
+#	$(CC) $(ASFLAGS) -c $< -o $@
+
+.c.o:
+	$(CC) $(CFLAGS) -c $< -o $@
+
+#IOCFUnserialize.c: IOCFUnserialize.yacc
+#	$(YACC) -o $@ $<
+
+WINSUPSRC/IOCFUnserialize.o: WINSUPSRC/IOCFUnserialize.c
+lzvndec.o: lzvndec.c
+lzvn_encode.o: lzvn_encode.c
+
+liblzvn.a: lzvndec.o lzvn_encode.o
+	$(AR) $(ARFLAGS) $@ lzvndec.o lzvn_encode.o
+	$(RANLIB) liblzvn.a
+
+decompkernelcache: decompkernelcache.o WINSUPSRC/IOCFUnserialize.o liblzvn.a
+	$(CC) $(CFLAGS) -o $@ decompkernelcache.o WINSUPSRC/IOCFUnserialize.o $(LIBS)
+	$(CODESIGN) -s "$(CSIDENT)" $@
+
+clean:
+	rm -f *.o WINSUPSRC/IOCFUnserialize.o liblzvn.a decompkernelcache
+
+install: decompkernelcache lzvn.h liblzvn.a
+	$(INSTALL) decompkernelcache $(PREFIX)/bin
+	$(INSTALL) liblzvn.a $(PREFIX)/lib
+	$(INSTALL) lzvn.h $(PREFIX)/include
