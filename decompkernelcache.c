@@ -1098,7 +1098,7 @@ uint8_t saveDictionary(unsigned char * aFileBuffer, const char *outfile)
         printf("NOTICE: Unserialized _PrelinkInfoDictionary\n");
 
         CFErrorRef xmlError = NULL;
-#if (MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || (TV_OS_VERSION_MIN_REQUIRED >= 90000)  || (VISION_OS_VERSION_MIN_REQUIRED >= 10000) || (IPHONE_OS_VERSION_MIN_REQUIRED >= 40000) || (WATCH_OS_VERSION_MIN_REQUIRED >= 20000) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
+#if (MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
         CFDataRef xmlData = CFPropertyListCreateData(kCFAllocatorDefault, prelinkInfoPlist, kCFPropertyListXMLFormat_v1_0, 0, &xmlError);
 #else
 		CFDataRef xmlData = CFPropertyListCreateXMLData(kCFAllocatorDefault, prelinkInfoPlist);
@@ -1304,7 +1304,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                     }
                     
                     CFErrorRef xmlError = NULL;
-#if (MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || (TV_OS_VERSION_MIN_REQUIRED >= 90000)  || (VISION_OS_VERSION_MIN_REQUIRED >= 10000) || (IPHONE_OS_VERSION_MIN_REQUIRED >= 40000) || (WATCH_OS_VERSION_MIN_REQUIRED >= 20000) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
+#if (MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
 					CFDataRef xmlData = CFPropertyListCreateData(kCFAllocatorDefault, kextPlist, kCFPropertyListXMLFormat_v1_0, 0, &xmlError);
 #else
 					CFDataRef xmlData = CFPropertyListCreateXMLData(kCFAllocatorDefault, kextPlist);
@@ -1486,7 +1486,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                     }
 
                     CFErrorRef xmlError = NULL;
-#if (MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || (TV_OS_VERSION_MIN_REQUIRED >= 90000)  || (VISION_OS_VERSION_MIN_REQUIRED >= 10000) || (IPHONE_OS_VERSION_MIN_REQUIRED >= 40000) || (WATCH_OS_VERSION_MIN_REQUIRED >= 20000) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
+#if (MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
 					CFDataRef xmlData = CFPropertyListCreateData(kCFAllocatorDefault, kextPlist, kCFPropertyListXMLFormat_v1_0, 0, &xmlError);
 #else
 					CFDataRef xmlData = CFPropertyListCreateXMLData(kCFAllocatorDefault, kextPlist);
@@ -1570,31 +1570,38 @@ void Usage(const char *name)
 #endif /* Version info extra */
 }
 
-uint32_t local_adler32(uint8_t *buffer, int32_t length)
+#define BASE 65521L /* largest prime smaller than 65536 */
+#define NMAX 5000  
+// NMAX (was 5521) the largest n such that 255n(n+1)/2 + (n+1)(BASE-1) <= 2^32-1
+
+#define DO1(buf,i)  {s1 += buf[i]; s2 += s1;}
+#define DO2(buf,i)  DO1(buf,i); DO1(buf,i+1);
+#define DO4(buf,i)  DO2(buf,i); DO2(buf,i+2);
+#define DO8(buf,i)  DO4(buf,i); DO4(buf,i+4);
+#define DO16(buf)   DO8(buf,0); DO8(buf,8);
+
+uint32_t local_adler32(uint8_t *buf, int32_t len)
 {
-    int32_t cnt = 0;
-    uint32_t result = 0;
-    uint32_t lowHalf = 1;
-    uint32_t highHalf = 0;
-    
-    for (cnt = 0; cnt < length; cnt++)
-    {
-        if ((cnt % 5000) == 0)
-        {
-            lowHalf  %= 65521L;
-            highHalf %= 65521L;
+    unsigned long s1 = 1; // adler & 0xffff;
+    unsigned long s2 = 0; // (adler >> 16) & 0xffff;
+    int k;
+	
+    while (len > 0) {
+        k = len < NMAX ? len : NMAX;
+        len -= k;
+        while (k >= 16) {
+            DO16(buf);
+			buf += 16;
+            k -= 16;
         }
-        
-        lowHalf += buffer[cnt];
-        highHalf += lowHalf;
+        if (k != 0) do {
+            s1 += *buf++;
+			s2 += s1;
+        } while (--k);
+        s1 %= BASE;
+        s2 %= BASE;
     }
-    
-    lowHalf  %= 65521L;
-    highHalf %= 65521L;
-
-    result = (highHalf << 16) | lowHalf;
-
-    return result;
+    return (s2 << 16) | s1;
 }
 
 #ifndef N
@@ -2228,7 +2235,11 @@ int main(int argc, char **argv)
 #endif
 
             adler32_cv = local_adler32(uncombuffer, (int32_t)uncombuflen);
+#if defined(__ppc__) || defined(__ppc64__)
+            khdr.adler32 = (swapped == 0) ? adler32_cv : OSSwapInt32(adler32_cv);
+#else
             khdr.adler32 = (swapped == 1) ? adler32_cv : OSSwapInt32(adler32_cv);
+#endif
 
             memset(khdr.reserved, 0, sizeof(khdr.reserved));
             memset(khdr.platformName, 0, sizeof(khdr.platformName));
@@ -2571,9 +2582,9 @@ int main(int argc, char **argv)
 
             rv = (int)lzvn_decode(uncombuffer, (size_t)uncombuflen, combuffer, (size_t)combuflen);
         }
-        
+
         adler32_ck = (swapped == 0) ? OSSwapInt32(prelinkfile->adler32) : prelinkfile->adler32;
-        
+
         if (buffer)
         {
             free(buffer);
@@ -2592,18 +2603,27 @@ int main(int argc, char **argv)
             
             return -9;
         }
-        
+
+#if defined(__ppc__) || defined(__ppc64__)
+        if (swapped == 0)
+        {
+            adler32_cv = OSSwapInt32(local_adler32(uncombuffer, (int32_t)uncombuflen));
+        } else {
+            adler32_cv = local_adler32(uncombuffer, (int32_t)uncombuflen);
+        }
+#else
         if (swapped == 1)
         {
             adler32_cv = OSSwapInt32(local_adler32(uncombuffer, (int32_t)uncombuflen));
         } else {
             adler32_cv = local_adler32(uncombuffer, (int32_t)uncombuflen);
         }
+#endif
 
         if (adler32_cv != adler32_ck)
         {
-            printf("ERROR: Checksum (adler32) mismatch (0x%.8X != 0x%.8X)\n", adler32_cv, adler32_ck);
-            
+            printf("WARNING: Checksum (adler32) mismatch (0x%.8X != 0x%.8X)\n", adler32_cv, adler32_ck);
+
             if (uncombuffer)
             {
                 free(uncombuffer);
