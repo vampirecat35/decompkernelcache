@@ -1274,7 +1274,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                             printf("_PrelinkExecutableSize........: 0x%llx/%lld\n", (unsigned long long)sourceSize, (unsigned long long)sourceSize);
                         }
 
-                        machHeader = (struct mach_header *)((unsigned char *)(uintptr_t)aFileBuffer + offset);
+                        machHeader = (struct mach_header *)((unsigned char *)((uintptr_t)aFileBuffer + offset));
                         
                         codeSignature = (struct linkedit_data_command *)find_load_command(machHeader, LC_CODE_SIGNATURE);
                         
@@ -1444,7 +1444,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                         if (kextSourceAddress != NULL)
                         {
                             CFNumberGetValue(kextSourceAddress, kCFNumberSInt64Type, &sourceAddress);
-                            offset = ((sourceAddress - prelinkTextSegment32->vmaddr) + prelinkTextSegment32->fileoff);
+                            offset = ((sourceAddress - (swapped == 0) ? prelinkTextSegment32->vmaddr : OSSwapInt32(prelinkTextSegment32->vmaddr)) + (swapped == 0) ? prelinkTextSegment32->fileoff : OSSwapInt32(prelinkTextSegment32->fileoff));
                             printf("_PrelinkExecutableSourceAddr32..: 0x%llx -> 0x%llx/%lld (offset)\n", (unsigned long long)sourceAddress, (unsigned long long)offset, (unsigned long long)offset);
                         }
                         
@@ -1456,7 +1456,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                             printf("_PrelinkExecutableSize........: 0x%llx/%lld\n", (unsigned long long)sourceSize, (unsigned long long)sourceSize);
                         }
 
-                        machHeader = (struct mach_header *)((unsigned char *)(uintptr_t)aFileBuffer + offset);
+                        machHeader = (struct mach_header *)((unsigned char *)((uintptr_t)aFileBuffer + offset));
                         
                         codeSignature = (struct linkedit_data_command *)find_load_command(machHeader, LC_CODE_SIGNATURE);
 
