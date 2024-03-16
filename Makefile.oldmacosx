@@ -1,0 +1,54 @@
+##
+#
+# AnV LZVN/LZSS kernel cache decompressor V1.0
+#
+# Intel 64-bit (x86_64) version
+#
+##
+
+PREFIX=/usr/local
+
+NASM=nasm
+CC=gcc-4.2 -I$(PREFIX)/include -F/System/Library/Frameworks
+AR=ar
+RANLIB=ranlib
+CODESIGN=codesign
+CSIDENT=Apple Development
+LIBS=-L. -llzvn -F/System/Library/Frameworks -framework CoreFoundation
+INSTALL=install
+CFLAGS=-std=gnu99 -arch ppc -arch ppc64 -arch i386 -arch x86_64 -Os
+ASFLAGS=$(CFLAGS)
+
+all: decompkernelcache
+
+# .asm.o:
+#	$(NASM) -o $@ -f macho64 $<
+
+# .s.o:
+#	$(CC) $(ASFLAGS) -c $< -o $@
+
+# .S.o:
+#	$(CC) $(ASFLAGS) -c $< -o $@
+
+.c.o:
+	$(CC) $(CFLAGS) -c $< -o $@
+
+liblzvn.a: lzvndec.o lzvn_encode.o
+	$(AR) cru $@ lzvndec.o lzvn_encode.o
+	$(RANLIB) $@
+
+WINSUPSRC/IOCFUnserialize.o: WINSUPSRC/IOCFUnserialize.c
+lzvndec.o: lzvndec.c
+lzvn_encode.o: lzvn_encode.c
+
+decompkernelcache: decompkernelcache.o WINSUPSRC/IOCFUnserialize.o liblzvn.a
+	$(CC) $(CFLAGS) -o $@ decompkernelcache.o WINSUPSRC/IOCFUnserialize.o $(LIBS)
+	$(CODESIGN) -s "$(CSIDENT)" $@
+
+clean:
+	rm -f *.o WINSUPSRC/IOCFUnserialize.o lzvndec.o lzvn_encode.o liblzvn.a decompkernelcache
+
+install: decompkernelcache liblzvn.a lzvn.h
+	$(INSTALL) decompkernelcache $(PREFIX)/bin
+	$(INSTALL) liblzvn.a $(PREFIX)/lib
+	$(INSTALL) lzvn.h $(PREFIX)/include

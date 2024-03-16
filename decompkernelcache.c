@@ -15,6 +15,10 @@
 #define kCFBundleIdentifierKey CFSTR("CFBundleIdentifier")
 #endif /* Linux Support */
 
+#if defined(__APPLE__)
+#include <Availability.h>
+#endif
+
 #if defined(_WIN32) || defined(WIN32) || defined(WINDOWS) || defined(_WINDOWS)
 #include <Windows.h>
 #include <io.h>
@@ -1094,7 +1098,11 @@ uint8_t saveDictionary(unsigned char * aFileBuffer, const char *outfile)
         printf("NOTICE: Unserialized _PrelinkInfoDictionary\n");
 
         CFErrorRef xmlError = NULL;
+#if (MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
         CFDataRef xmlData = CFPropertyListCreateData(kCFAllocatorDefault, prelinkInfoPlist, kCFPropertyListXMLFormat_v1_0, 0, &xmlError);
+#else
+		CFDataRef xmlData = CFPropertyListCreateXMLData(kCFAllocatorDefault, prelinkInfoPlist);
+#endif
 
         if (xmlError == NULL)
         {
@@ -1296,8 +1304,12 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                     }
                     
                     CFErrorRef xmlError = NULL;
-                    CFDataRef xmlData = CFPropertyListCreateData(kCFAllocatorDefault, kextPlist, kCFPropertyListXMLFormat_v1_0, 0, &xmlError);
-                    
+#if (MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
+					CFDataRef xmlData = CFPropertyListCreateData(kCFAllocatorDefault, kextPlist, kCFPropertyListXMLFormat_v1_0, 0, &xmlError);
+#else
+					CFDataRef xmlData = CFPropertyListCreateXMLData(kCFAllocatorDefault, kextPlist);
+#endif
+					
                     if (xmlError == NULL)
                     {
                         const unsigned char * buffer = CFDataGetBytePtr(xmlData);
@@ -1474,8 +1486,12 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                     }
 
                     CFErrorRef xmlError = NULL;
-                    CFDataRef xmlData = CFPropertyListCreateData(kCFAllocatorDefault, kextPlist, kCFPropertyListXMLFormat_v1_0, 0, &xmlError);
-                    
+#if (MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
+					CFDataRef xmlData = CFPropertyListCreateData(kCFAllocatorDefault, kextPlist, kCFPropertyListXMLFormat_v1_0, 0, &xmlError);
+#else
+					CFDataRef xmlData = CFPropertyListCreateXMLData(kCFAllocatorDefault, kextPlist);
+#endif					
+
                     if (xmlError == NULL)
                     {
                         const unsigned char * buffer = CFDataGetBytePtr(xmlData);
@@ -2766,3 +2782,4 @@ int main(int argc, char **argv)
     
     return 0;
 }
+ 
