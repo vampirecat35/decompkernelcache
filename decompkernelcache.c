@@ -1168,7 +1168,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
             if (prelinkInfoPlist)
             {
                 printf("NOTICE: Unserialized prelink info\n");
-                
+
                 CFArrayRef kextPlistArray = NULL;
                 kextPlistArray = (CFArrayRef)CFDictionaryGetValue(prelinkInfoPlist, CFSTR("_PrelinkInfoDictionary"));
                 CFIndex i = 0;
@@ -1304,6 +1304,15 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                     }
                     
                     CFErrorRef xmlError = NULL;
+
+                    CFDictionaryRemoveValue((CFMutableDictionaryRef)kextPlist, CFSTR("_PrelinkBundlePath"));
+                    CFDictionaryRemoveValue((CFMutableDictionaryRef)kextPlist, CFSTR("_PrelinkExecutableLoadAddr"));
+                    CFDictionaryRemoveValue((CFMutableDictionaryRef)kextPlist, CFSTR("_PrelinkExecutableRelativePath"));
+                    CFDictionaryRemoveValue((CFMutableDictionaryRef)kextPlist, CFSTR("_PrelinkExecutableSize"));
+                    CFDictionaryRemoveValue((CFMutableDictionaryRef)kextPlist, CFSTR("_PrelinkExecutableSourceAddr"));
+                    CFDictionaryRemoveValue((CFMutableDictionaryRef)kextPlist, CFSTR("_PrelinkKmodInfo"));
+                    CFDictionaryRemoveValue((CFMutableDictionaryRef)kextPlist, CFSTR("_PrelinkInterfaceUUID"));
+
 #if (MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
 					CFDataRef xmlData = CFPropertyListCreateData(kCFAllocatorDefault, kextPlist, kCFPropertyListXMLFormat_v1_0, 0, &xmlError);
 #else
