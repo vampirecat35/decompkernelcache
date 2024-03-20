@@ -17,11 +17,11 @@ CC=clang -I$(PREFIX)/include -F$(SDKPREFIX)/System/Library/Frameworks
 AR=ar
 RANLIB=ranlib
 CODESIGN=codesign
-CSIDENT=-
+CSIDENT=Apple Development
 LIBS=-L. -llzvn -F$(SDKPREFIX)/System/Library/Frameworks -framework IOKit -framework CoreFoundation
 INSTALL=install
 ARFLAGS=cru
-CFLAGS=-arch x86_64 -Os
+CFLAGS=-arch x86_64 -Os -mmacosx-version-min=10.6
 ASFLAGS=$(CFLAGS)
 
 all: decompkernelcache

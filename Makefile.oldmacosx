@@ -16,7 +16,7 @@ CODESIGN=codesign
 CSIDENT=Apple Development
 LIBS=-L. -llzvn -F/System/Library/Frameworks -framework CoreFoundation
 INSTALL=install
-CFLAGS=-std=gnu99 -arch ppc -arch ppc64 -arch i386 -arch x86_64 -Os
+CFLAGS=-std=gnu99 -arch ppc -arch ppc64 -arch i386 -arch x86_64 -Os -mmacosx-version-min=10.4
 ASFLAGS=$(CFLAGS)
 
 all: decompkernelcache
