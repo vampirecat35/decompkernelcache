@@ -21,7 +21,7 @@ CSIDENT=Apple Development
 LIBS=-L. -llzvn -F$(SDKPREFIX)/System/Library/Frameworks -framework IOKit -framework CoreFoundation
 INSTALL=install
 ARFLAGS=cru
-CFLAGS=-arch x86_64 -Os -mmacosx-version-min=10.6
+CFLAGS=-arch x86_64 -arch arm64 -Os -mmacosx-version-min=10.6
 ASFLAGS=$(CFLAGS)
 
 all: decompkernelcache
