@@ -763,13 +763,13 @@ uint8_t is_prelinkedkernel(unsigned char *aFileBuffer)
     prelinkTextSegment32 = (struct segment_command *)prelinkTextSegment64;
     prelinkInfoSegment32 = (struct segment_command *)prelinkInfoSegment64;
 
-    if (((prelinkTextSegment32) /*&& (prelinkInfoSegment32->filesize)*/) &&
-        ((prelinkTextSegment32) /*&& (prelinkTextSegment32->filesize)*/) &&
+    if (((prelinkTextSegment32) && (prelinkInfoSegment32->filesize)) &&
+        ((prelinkTextSegment32) && (prelinkTextSegment32->filesize)) &&
         (is32bit != 0))
     {
         return 1;
-    } else if (((prelinkTextSegment64) /*&& (prelinkInfoSegment64->filesize)*/) &&
-               ((prelinkTextSegment64) /*&& (prelinkTextSegment64->filesize)*/) &&
+    } else if (((prelinkTextSegment64) && (prelinkInfoSegment64->filesize)) &&
+               ((prelinkTextSegment64) && (prelinkTextSegment64->filesize)) &&
                (is32bit == 0)) {
         return 1;
     }
