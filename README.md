@@ -17,6 +17,7 @@ Mac OS X prelinked kernel compressor/decompressor/extractor  (V2.3)
 * Added Android support
 * Added Compression of LZVN/LZSS kernel cache
 * Updated to new Visual Studio project
+* Added kernelcollections support (decompkernelcache-kc)
 
 - TODO:
 * Adding kexts to kernel cache
