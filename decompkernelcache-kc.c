@@ -6,7 +6,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <math.h>
+
+#if defined(__APPLE__) && defined(__MACH__)
 #include <mach-o/nlist.h>
+#else
+#include "MachNlist.h"
+#endif
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/IOCFUnserialize.h>
