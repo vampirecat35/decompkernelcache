@@ -8,6 +8,7 @@
 #include <math.h>
 
 #if defined(__APPLE__) && defined(__MACH__)
+#include <Availability.h>
 #include <mach-o/nlist.h>
 #else
 #include "MachNlist.h"
@@ -1160,7 +1161,7 @@ uint8_t saveDictionary(unsigned char * aFileBuffer, const char *outfile)
 
         CFErrorRef xmlError = NULL;
 
-#if (MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
+#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || (__IPHONE_OS_VERSION_MIN_REQUIRED >= 40000) || (__WATCH_OS_VERSION_MIN_REQUIRED >= 20000) || (VISIONOS_VERSION_MIN_REQUIRED >= 10000) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
         CFDataRef xmlData = CFPropertyListCreateData(kCFAllocatorDefault, prelinkInfoPlist, kCFPropertyListXMLFormat_v1_0, 0, &xmlError);
 #else
         CFDataRef xmlData = CFPropertyListCreateXMLData(kCFAllocatorDefault, prelinkInfoPlist);
@@ -1558,7 +1559,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                     }
                     
                     CFErrorRef xmlError = NULL;
-#if (MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
+#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || (__IPHONE_OS_VERSION_MIN_REQUIRED >= 40000) || (__WATCH_OS_VERSION_MIN_REQUIRED >= 20000) || (VISIONOS_VERSION_MIN_REQUIRED >= 10000) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
                     CFDataRef xmlData = CFPropertyListCreateData(kCFAllocatorDefault, kextPlist, kCFPropertyListXMLFormat_v1_0, 0, &xmlError);
 #else
                     CFDataRef xmlData = CFPropertyListCreateXMLData(kCFAllocatorDefault, kextPlist);
@@ -1741,7 +1742,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
 
                     CFErrorRef xmlError = NULL;
 
-#if (MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
+#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1060) || (__IPHONE_OS_VERSION_MIN_REQUIRED >= 40000) || (__WATCH_OS_VERSION_MIN_REQUIRED >= 20000) || (VISIONOS_VERSION_MIN_REQUIRED >= 10000) || defined(__linux__) || defined(_WIN32) || defined(WIN32)
                     CFDataRef xmlData = CFPropertyListCreateData(kCFAllocatorDefault, kextPlist, kCFPropertyListXMLFormat_v1_0, 0, &xmlError);
 #else
                     CFDataRef xmlData = CFPropertyListCreateXMLData(kCFAllocatorDefault, kextPlist);

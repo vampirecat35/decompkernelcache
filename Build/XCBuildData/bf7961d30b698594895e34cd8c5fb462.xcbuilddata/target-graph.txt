@@ -1,0 +1,9 @@
+Target dependency graph (4 targets)
+Target 'All' in project 'decompkernelcache'
+➜ Explicit dependency on target 'decompkernelcache-kc' in project 'decompkernelcache'
+➜ Explicit dependency on target 'decompkernelcache' in project 'decompkernelcache'
+Target 'decompkernelcache' in project 'decompkernelcache'
+➜ Explicit dependency on target 'lzvn' in project 'decompkernelcache'
+Target 'decompkernelcache-kc' in project 'decompkernelcache'
+➜ Explicit dependency on target 'lzvn' in project 'decompkernelcache'
+Target 'lzvn' in project 'decompkernelcache' (no dependencies)

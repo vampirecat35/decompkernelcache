@@ -26,7 +26,7 @@ ARFLAGS=cru
 CFLAGS=-arch armv7k -Os -mwatchos-version-min=6.0 -isysroot $(XCODEPATH)/Contents/Developer/Platforms/$(PLATFORM)/Developer/SDKs/$(SDK)
 ASFLAGS=$(CFLAGS)
 
-all: decompkernelcache
+all: decompkernelcache decompkernelcache-kc
 
 # .asm.o:
 #	$(NASM) -o $@ -f macho64 $<

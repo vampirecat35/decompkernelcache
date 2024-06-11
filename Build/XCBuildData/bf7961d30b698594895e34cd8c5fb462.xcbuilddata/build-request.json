@@ -1,0 +1,55 @@
+{
+  "buildCommand" : {
+    "command" : "prepareForIndexing",
+    "enableIndexBuildArena" : false,
+    "targets" : null
+  },
+  "configuredTargets" : [
+    {
+      "guid" : "a91d24df59ce4d27c6fe5ef0064a039d2322324b3d9a45b4dc81d36007cbd87c"
+    },
+    {
+      "guid" : "a91d24df59ce4d27c6fe5ef0064a039d059aa824f2e253b32b1fe615860f7e72"
+    },
+    {
+      "guid" : "a91d24df59ce4d27c6fe5ef0064a039d733e37f231d0b67b34e20a8552b784a4"
+    },
+    {
+      "guid" : "a91d24df59ce4d27c6fe5ef0064a039de981f6ba84d8bd72f4a63c20dd212578"
+    }
+  ],
+  "containerPath" : "/Users/andyvand/Downloads/decompkernelcache/decompkernelcache.xcodeproj",
+  "continueBuildingAfterErrors" : true,
+  "dependencyScope" : "workspace",
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "build",
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "",
+      "buildProductsPath" : "",
+      "derivedDataPath" : "/Users/andyvand/Library/Developer/Xcode/DerivedData",
+      "indexDataStoreFolderPath" : "/Users/andyvand/Library/Developer/Xcode/DerivedData/decompkernelcache-ckpquhmjubqoaieqfmfikvvynarg/Index.noindex/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/andyvand/Library/Developer/Xcode/DerivedData/decompkernelcache-ckpquhmjubqoaieqfmfikvvynarg/Index.noindex/PrecompiledHeaders",
+      "pchPath" : ""
+    },
+    "configurationName" : "Debug",
+    "overrides" : {
+      "synthesized" : {
+        "table" : {
+          "ENABLE_PREVIEWS" : "NO",
+          "ENABLE_XOJIT_PREVIEWS" : "NO",
+          "ONLY_ACTIVE_ARCH" : "YES"
+        }
+      }
+    }
+  },
+  "qos" : "default",
+  "schemeCommand" : "launch",
+  "showNonLoggedProgress" : true,
+  "useDryRun" : true,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}
