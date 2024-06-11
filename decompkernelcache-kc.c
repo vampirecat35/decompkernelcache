@@ -806,11 +806,11 @@ void *find_segment(struct mach_header *aMachHeader, const char *aSegmentName, in
 
 uint8_t is_prelinkedkernel(unsigned char *aFileBuffer)
 {
-    struct segment_command_64 *prelinkTextSegment64 = NULL;
+    /*struct segment_command_64 *prelinkTextSegment64 = NULL;
     struct segment_command_64 *prelinkInfoSegment64 = NULL;
     struct segment_command *prelinkTextSegment32 = NULL;
     struct segment_command *prelinkInfoSegment32 = NULL;
-    int is32bit = 0;
+    int is32bit = 0;*/
 
     struct mach_header *machHeader = (struct mach_header *)((unsigned char *)aFileBuffer);
 
@@ -1323,7 +1323,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                         uint64_t offsetls            = 0;
                         uint64_t offsetlb            = 0;
                         uint64_t offset2            = 0;
-                        uint64_t offsetdiff            = 0;
+                        //uint64_t offsetdiff            = 0;
 
                         
                         CFStringGetCString(executableName, kextIdentifierBuffer, sizeof(kextIdentifierBuffer), kCFStringEncodingUTF8);
@@ -1373,8 +1373,8 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                         struct symtab_command* symtab = NULL;
                         uint8_t* unslidLinkEditBase = NULL;
                         intptr_t slide = 0;
-                        uint32_t i, j;
-                        uint32_t    symoff0;
+                        uint32_t i = 0, j = 0;
+                        uint32_t symoff0 = 0;
                         
                         sgp = (struct segment_command_64 *) ((char *)mhp + sizeof(struct mach_header_64));
                     
@@ -1593,7 +1593,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                 printf("ERROR: Can't unserialize _PrelinkInfoDictionary!\n");
                 return -1;
             }
-    } else if ((prelinkTextSegment32) && (prelinkInfoSegment32) && (is32bit == 1)) {
+    } else if ((prelinkTextSegment32) && (prelinkInfoSegment32) /*&& (is32bit == 1)*/) {
             printf("prelinkInfoSegment32->vmaddr..: 0x%lx\n", ((unsigned long)((swapped == 0) ? prelinkInfoSegment32->vmaddr : OSSwapInt32(prelinkInfoSegment32->vmaddr))));
             printf("prelinkInfoSegment32->fileoff.: 0x%lx\n", ((unsigned long)((swapped == 0) ? prelinkInfoSegment32->fileoff : OSSwapInt32(prelinkInfoSegment32->fileoff))));
             printf("prelinkInfoSegment32->filesize: 0x%lx\n", ((unsigned long)((swapped == 0) ? prelinkInfoSegment32->filesize : OSSwapInt32(prelinkInfoSegment32->filesize))));

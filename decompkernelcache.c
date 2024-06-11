@@ -1610,7 +1610,7 @@ uint32_t local_adler32(uint8_t *buf, int32_t len)
         s1 %= BASE;
         s2 %= BASE;
     }
-    return (s2 << 16) | s1;
+    return (uint32_t)((s2 << 16) | s1);
 }
 
 #ifndef N
@@ -1914,7 +1914,7 @@ decompress_lzss(uint8_t *dst, uint8_t *src, uint32_t srclen)
         }
     }
     
-    return dst - dststart;
+    return (int)(dst - dststart);
 }
 
 int main(int argc, char **argv)
@@ -2453,7 +2453,7 @@ int main(int argc, char **argv)
         {
             printf("Found LZSS compressed kernel\n");
 
-            rv = (int)decompress_lzss((uint8_t *)uncombuffer, (uint8_t *)combuffer, combuflen);
+            rv = (int)decompress_lzss((uint8_t *)uncombuffer, (uint8_t *)combuffer, (uint32_t)combuflen);
         } else {
             printf("Found LZVN compressed kernel\n");
 

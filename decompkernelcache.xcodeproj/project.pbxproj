@@ -3,10 +3,29 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		AB6668372C189DBF004DA1D6 /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = AB6668382C189DBF004DA1D6 /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+			);
+			dependencies = (
+				AB66683E2C189DC8004DA1D6 /* PBXTargetDependency */,
+				AB66683C2C189DC5004DA1D6 /* PBXTargetDependency */,
+			);
+			name = All;
+			productName = All;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
+		AB6668312C189D77004DA1D6 /* decompkernelcache-kc.c in Sources */ = {isa = PBXBuildFile; fileRef = AB6668302C189D77004DA1D6 /* decompkernelcache-kc.c */; };
+		AB6668342C189D9D004DA1D6 /* liblzvn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ABFB7EC2243B3C57001383A1 /* liblzvn.a */; };
+		AB6668352C189DAB004DA1D6 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABFB7EDE243B4007001383A1 /* CoreFoundation.framework */; };
+		AB6668362C189DAF004DA1D6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABFB7EE0243B4010001383A1 /* IOKit.framework */; };
 		ABFB7ECE243B3C8E001383A1 /* lzvn_encode.c in Sources */ = {isa = PBXBuildFile; fileRef = ABFB7ECC243B3C8E001383A1 /* lzvn_encode.c */; };
 		ABFB7ED0243B3C9A001383A1 /* lzvn.h in Headers */ = {isa = PBXBuildFile; fileRef = ABFB7ECF243B3C9A001383A1 /* lzvn.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		ABFB7ED5243B3D6A001383A1 /* decompkernelcache.c in Sources */ = {isa = PBXBuildFile; fileRef = ABFB7ED4243B3D6A001383A1 /* decompkernelcache.c */; };
@@ -18,6 +37,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		AB6668322C189D97004DA1D6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AB9AA5FC243B3BD900EECAED /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ABFB7EC1243B3C57001383A1;
+			remoteInfo = lzvn;
+		};
+		AB66683B2C189DC5004DA1D6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AB9AA5FC243B3BD900EECAED /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AB9AA603243B3BD900EECAED;
+			remoteInfo = decompkernelcache;
+		};
+		AB66683D2C189DC8004DA1D6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AB9AA5FC243B3BD900EECAED /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AB6668282C189D64004DA1D6;
+			remoteInfo = "decompkernelcache-kc";
+		};
 		ABFB7EC6243B3C67001383A1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AB9AA5FC243B3BD900EECAED /* Project object */;
@@ -35,6 +75,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		AB6668272C189D64004DA1D6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		AB9AA602243B3BD900EECAED /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -47,6 +96,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AB6668292C189D64004DA1D6 /* decompkernelcache-kc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "decompkernelcache-kc"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB6668302C189D77004DA1D6 /* decompkernelcache-kc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "decompkernelcache-kc.c"; sourceTree = SOURCE_ROOT; };
 		AB9AA604243B3BD900EECAED /* decompkernelcache */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = decompkernelcache; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABFB7EC2243B3C57001383A1 /* liblzvn.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblzvn.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABFB7ECC243B3C8E001383A1 /* lzvn_encode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lzvn_encode.c; sourceTree = "<group>"; };
@@ -60,6 +111,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		AB6668262C189D64004DA1D6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB6668362C189DAF004DA1D6 /* IOKit.framework in Frameworks */,
+				AB6668352C189DAB004DA1D6 /* CoreFoundation.framework in Frameworks */,
+				AB6668342C189D9D004DA1D6 /* liblzvn.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AB9AA601243B3BD900EECAED /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -80,11 +141,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AB66682A2C189D64004DA1D6 /* decompkernelcache-kc */ = {
+			isa = PBXGroup;
+			children = (
+				AB6668302C189D77004DA1D6 /* decompkernelcache-kc.c */,
+			);
+			path = "decompkernelcache-kc";
+			sourceTree = "<group>";
+		};
 		AB9AA5FB243B3BD900EECAED = {
 			isa = PBXGroup;
 			children = (
 				ABFB7ED2243B3CDA001383A1 /* decompkernelcache */,
 				ABFB7EC8243B3C6C001383A1 /* LZVN */,
+				AB66682A2C189D64004DA1D6 /* decompkernelcache-kc */,
 				ABFB7EDA243B3F81001383A1 /* Frameworks */,
 				AB9AA605243B3BD900EECAED /* Products */,
 			);
@@ -95,6 +165,7 @@
 			children = (
 				AB9AA604243B3BD900EECAED /* decompkernelcache */,
 				ABFB7EC2243B3C57001383A1 /* liblzvn.a */,
+				AB6668292C189D64004DA1D6 /* decompkernelcache-kc */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -150,6 +221,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		AB6668282C189D64004DA1D6 /* decompkernelcache-kc */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AB66682F2C189D64004DA1D6 /* Build configuration list for PBXNativeTarget "decompkernelcache-kc" */;
+			buildPhases = (
+				AB6668252C189D64004DA1D6 /* Sources */,
+				AB6668262C189D64004DA1D6 /* Frameworks */,
+				AB6668272C189D64004DA1D6 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AB6668332C189D97004DA1D6 /* PBXTargetDependency */,
+			);
+			name = "decompkernelcache-kc";
+			productName = "decompkernelcache-kc";
+			productReference = AB6668292C189D64004DA1D6 /* decompkernelcache-kc */;
+			productType = "com.apple.product-type.tool";
+		};
 		AB9AA603243B3BD900EECAED /* decompkernelcache */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AB9AA60B243B3BD900EECAED /* Build configuration list for PBXNativeTarget "decompkernelcache" */;
@@ -193,9 +282,16 @@
 		AB9AA5FC243B3BD900EECAED /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1200;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1540;
 				ORGANIZATIONNAME = "Vampire Cat";
 				TargetAttributes = {
+					AB6668282C189D64004DA1D6 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					AB6668372C189DBF004DA1D6 = {
+						CreatedOnToolsVersion = 15.4;
+					};
 					AB9AA603243B3BD900EECAED = {
 						CreatedOnToolsVersion = 11.3.1;
 					};
@@ -217,13 +313,23 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				AB6668372C189DBF004DA1D6 /* All */,
 				AB9AA603243B3BD900EECAED /* decompkernelcache */,
+				AB6668282C189D64004DA1D6 /* decompkernelcache-kc */,
 				ABFB7EC1243B3C57001383A1 /* lzvn */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		AB6668252C189D64004DA1D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB6668312C189D77004DA1D6 /* decompkernelcache-kc.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AB9AA600243B3BD900EECAED /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -244,6 +350,21 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		AB6668332C189D97004DA1D6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ABFB7EC1243B3C57001383A1 /* lzvn */;
+			targetProxy = AB6668322C189D97004DA1D6 /* PBXContainerItemProxy */;
+		};
+		AB66683C2C189DC5004DA1D6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AB9AA603243B3BD900EECAED /* decompkernelcache */;
+			targetProxy = AB66683B2C189DC5004DA1D6 /* PBXContainerItemProxy */;
+		};
+		AB66683E2C189DC8004DA1D6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AB6668282C189D64004DA1D6 /* decompkernelcache-kc */;
+			targetProxy = AB66683D2C189DC8004DA1D6 /* PBXContainerItemProxy */;
+		};
 		ABFB7EC7243B3C67001383A1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = ABFB7EC1243B3C57001383A1 /* lzvn */;
@@ -257,6 +378,60 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		AB66682D2C189D64004DA1D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = YZAQ856TTM;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.5;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		AB66682E2C189D64004DA1D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = YZAQ856TTM;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.5;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		AB6668392C189DBF004DA1D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = YZAQ856TTM;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		AB66683A2C189DBF004DA1D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = YZAQ856TTM;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		AB9AA609243B3BD900EECAED /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -296,6 +471,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2.2;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = YZAQ856TTM;
 				DYLIB_COMPATIBILITY_VERSION = 1.0;
@@ -368,6 +544,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2.2;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = YZAQ856TTM;
 				DYLIB_COMPATIBILITY_VERSION = 1.0;
@@ -399,6 +576,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CURRENT_PROJECT_VERSION = 2.1;
+				DEAD_CODE_STRIPPING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1.0;
 				DYLIB_CURRENT_VERSION = 2.1;
 				INFOPLIST_FILE = "$(SRCROOT)/decompkernelcache.plist";
@@ -414,6 +592,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CURRENT_PROJECT_VERSION = 2.1;
+				DEAD_CODE_STRIPPING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1.0;
 				DYLIB_CURRENT_VERSION = 2.1;
 				INFOPLIST_FILE = "$(SRCROOT)/decompkernelcache.plist";
@@ -427,6 +606,7 @@
 		ABFB7EC4243B3C57001383A1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -436,6 +616,7 @@
 		ABFB7EC5243B3C57001383A1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -445,6 +626,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		AB66682F2C189D64004DA1D6 /* Build configuration list for PBXNativeTarget "decompkernelcache-kc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB66682D2C189D64004DA1D6 /* Debug */,
+				AB66682E2C189D64004DA1D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AB6668382C189DBF004DA1D6 /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB6668392C189DBF004DA1D6 /* Debug */,
+				AB66683A2C189DBF004DA1D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		AB9AA5FF243B3BD900EECAED /* Build configuration list for PBXProject "decompkernelcache" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

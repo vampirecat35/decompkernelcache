@@ -1,0 +1,33 @@
+---
+triple:          'x86_64-apple-darwin'
+binary-path:     '/Users/andyvand/Downloads/decompkernelcache/build/Release/decompkernelcache'
+relocations:
+  - { offsetInCU: 0x34, offset: 0x4DD2E, size: 0x8, addend: 0x0, symName: _decompkernelcacheVersionString, symObjAddr: 0x0, symBinAddr: 0x100006510, symSize: 0x0 }
+  - { offsetInCU: 0x69, offset: 0x4DD63, size: 0x8, addend: 0x0, symName: _decompkernelcacheVersionNumber, symObjAddr: 0x40, symBinAddr: 0x100006550, symSize: 0x0 }
+  - { offsetInCU: 0x26, offset: 0x4DD9F, size: 0x8, addend: 0x0, symName: _cpu_type_for_name, symObjAddr: 0x0, symBinAddr: 0x100001598, symSize: 0x20C }
+  - { offsetInCU: 0x6A2, offset: 0x4E41B, size: 0x8, addend: 0x0, symName: _cpu_type_for_name, symObjAddr: 0x0, symBinAddr: 0x100001598, symSize: 0x20C }
+  - { offsetInCU: 0x6CF, offset: 0x4E448, size: 0x8, addend: 0x0, symName: _cpu_name_for_type, symObjAddr: 0x20C, symBinAddr: 0x1000017A4, symSize: 0x134 }
+  - { offsetInCU: 0x6FC, offset: 0x4E475, size: 0x8, addend: 0x0, symName: _find_load_command, symObjAddr: 0x340, symBinAddr: 0x1000018D8, symSize: 0x93 }
+  - { offsetInCU: 0x772, offset: 0x4E4EB, size: 0x8, addend: 0x0, symName: _find_segment, symObjAddr: 0x3D3, symBinAddr: 0x10000196B, symSize: 0x100 }
+  - { offsetInCU: 0x81F, offset: 0x4E598, size: 0x8, addend: 0x0, symName: _is_prelinkedkernel, symObjAddr: 0x4D3, symBinAddr: 0x100001A6B, symSize: 0x99 }
+  - { offsetInCU: 0x8EC, offset: 0x4E665, size: 0x8, addend: 0x0, symName: _listKexts, symObjAddr: 0x56C, symBinAddr: 0x100001B04, symSize: 0x25F }
+  - { offsetInCU: 0xC16, offset: 0x4E98F, size: 0x8, addend: 0x0, symName: _saveKernel, symObjAddr: 0x7CB, symBinAddr: 0x100001D63, symSize: 0x359 }
+  - { offsetInCU: 0xEC7, offset: 0x4EC40, size: 0x8, addend: 0x0, symName: _d_mkdir, symObjAddr: 0xB24, symBinAddr: 0x1000020BC, symSize: 0xE7 }
+  - { offsetInCU: 0xFD5, offset: 0x4ED4E, size: 0x8, addend: 0x0, symName: _saveDictionary, symObjAddr: 0xC0B, symBinAddr: 0x1000021A3, symSize: 0x152 }
+  - { offsetInCU: 0x121A, offset: 0x4EF93, size: 0x8, addend: 0x0, symName: _saveKexts, symObjAddr: 0xD5D, symBinAddr: 0x1000022F5, symSize: 0xFCC }
+  - { offsetInCU: 0x1F01, offset: 0x4FC7A, size: 0x8, addend: 0x0, symName: _Usage, symObjAddr: 0x1D29, symBinAddr: 0x1000032C1, symSize: 0x14C }
+  - { offsetInCU: 0x1F2A, offset: 0x4FCA3, size: 0x8, addend: 0x0, symName: _local_adler32, symObjAddr: 0x1E75, symBinAddr: 0x10000340D, symSize: 0x173 }
+  - { offsetInCU: 0x1FBE, offset: 0x4FD37, size: 0x8, addend: 0x0, symName: _compress_lzss, symObjAddr: 0x1FE8, symBinAddr: 0x100003580, symSize: 0x383 }
+  - { offsetInCU: 0x21BA, offset: 0x4FF33, size: 0x8, addend: 0x0, symName: _insert_node, symObjAddr: 0x236B, symBinAddr: 0x100003903, symSize: 0x15D }
+  - { offsetInCU: 0x2232, offset: 0x4FFAB, size: 0x8, addend: 0x0, symName: _delete_node, symObjAddr: 0x24C8, symBinAddr: 0x100003A60, symSize: 0xFB }
+  - { offsetInCU: 0x227B, offset: 0x4FFF4, size: 0x8, addend: 0x0, symName: _decompress_lzss, symObjAddr: 0x25C3, symBinAddr: 0x100003B5B, symSize: 0x12D }
+  - { offsetInCU: 0x235F, offset: 0x500D8, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x26F0, symBinAddr: 0x100003C88, symSize: 0x13E4 }
+  - { offsetInCU: 0x26, offset: 0x508A3, size: 0x8, addend: 0x0, symName: _lzvn_decode, symObjAddr: 0x0, symBinAddr: 0x10000506C, symSize: 0x4A8 }
+  - { offsetInCU: 0x34, offset: 0x508B1, size: 0x8, addend: 0x0, symName: _lzvn_decode, symObjAddr: 0x0, symBinAddr: 0x10000506C, symSize: 0x4A8 }
+  - { offsetInCU: 0x5A, offset: 0x508D7, size: 0x8, addend: 0x0, symName: _lzvn_decode.caseTable, symObjAddr: 0x4B0, symBinAddr: 0x100006570, symSize: 0x0 }
+  - { offsetInCU: 0x26, offset: 0x50A75, size: 0x8, addend: 0x0, symName: _lzvn_encode_state, symObjAddr: 0x0, symBinAddr: 0x100005514, symSize: 0x953 }
+  - { offsetInCU: 0x518, offset: 0x50F67, size: 0x8, addend: 0x0, symName: _lzvn_encode_state, symObjAddr: 0x0, symBinAddr: 0x100005514, symSize: 0x953 }
+  - { offsetInCU: 0xCD1, offset: 0x51720, size: 0x8, addend: 0x0, symName: _lzvn_emit_match, symObjAddr: 0x953, symBinAddr: 0x100005E67, symSize: 0x245 }
+  - { offsetInCU: 0x10E4, offset: 0x51B33, size: 0x8, addend: 0x0, symName: _lzvn_encode_work_size, symObjAddr: 0xB98, symBinAddr: 0x1000060AC, symSize: 0xB }
+  - { offsetInCU: 0x11F5, offset: 0x51C44, size: 0x8, addend: 0x0, symName: _lzvn_encode, symObjAddr: 0xBA3, symBinAddr: 0x1000060B7, symSize: 0x237 }
+...
