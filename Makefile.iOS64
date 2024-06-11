@@ -26,7 +26,7 @@ ARFLAGS=cru
 CFLAGS=-arch arm64 -Os -mios-version-min=13.0 -isysroot $(XCODEPATH)/Contents/Developer/Platforms/$(PLATFORM)/Developer/SDKs/$(SDK)
 ASFLAGS=$(CFLAGS)
 
-all: decompkernelcache
+all: decompkernelcache decompkernelcache-kc
 
 # .asm.o:
 #	$(NASM) -o $@ -f macho64 $<
@@ -55,10 +55,15 @@ decompkernelcache: decompkernelcache.o IOCFUnserialize.o liblzvn.a
 	$(CC) $(CFLAGS) -o $@ decompkernelcache.o IOCFUnserialize.o $(LIBS)
 	$(CODESIGN) -s "$(CSIDENT)" $@
 
-clean:
-	rm -f *.o IOCFUnserialize.c liblzvn.a decompkernelcache
+decompkernelcache-kc: decompkernelcache-kc.o IOCFUnserialize.o liblzvn.a
+	$(CC) $(CFLAGS) -o $@ decompkernelcache-kc.o IOCFUnserialize.o $(LIBS)
+	$(CODESIGN) -s "$(CSIDENT)" $@
 
-install: decompkernelcache lzvn.h liblzvn.a
+clean:
+	rm -f *.o IOCFUnserialize.c liblzvn.a decompkernelcache decompkernelcache-kc
+
+install: decompkernelcache decompkernelcache-kc lzvn.h liblzvn.a
 	$(INSTALL) decompkernelcache $(PREFIX)/bin
+	$(INSTALL) decompkernelcache-kc $(PREFIX)/bin
 	$(INSTALL) liblzvn.a $(PREFIX)/lib
 	$(INSTALL) lzvn.h $(PREFIX)/include

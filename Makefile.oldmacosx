@@ -45,10 +45,15 @@ decompkernelcache: decompkernelcache.o WINSUPSRC/IOCFUnserialize.o liblzvn.a
 	$(CC) $(CFLAGS) -o $@ decompkernelcache.o WINSUPSRC/IOCFUnserialize.o $(LIBS)
 	$(CODESIGN) -s "$(CSIDENT)" $@
 
-clean:
-	rm -f *.o WINSUPSRC/IOCFUnserialize.o lzvndec.o lzvn_encode.o liblzvn.a decompkernelcache
+decompkernelcache-kc: decompkernelcache-kc.o WINSUPSRC/IOCFUnserialize.o liblzvn.a
+	$(CC) $(CFLAGS) -o $@ decompkernelcache-kc.o WINSUPSRC/IOCFUnserialize.o $(LIBS)
+	$(CODESIGN) -s "$(CSIDENT)" $@
 
-install: decompkernelcache liblzvn.a lzvn.h
+clean:
+	rm -f *.o WINSUPSRC/IOCFUnserialize.o lzvndec.o lzvn_encode.o liblzvn.a decompkernelcache decompkernelcache-kc
+
+install: decompkernelcache decompkernelcache-kc liblzvn.a lzvn.h
 	$(INSTALL) decompkernelcache $(PREFIX)/bin
+	$(INSTALL) decompkernelcache-kc $(PREFIX)/bin
 	$(INSTALL) liblzvn.a $(PREFIX)/lib
 	$(INSTALL) lzvn.h $(PREFIX)/include

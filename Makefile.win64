@@ -21,7 +21,7 @@ ARFLAGS=cru
 CFLAGS=-Os
 ASFLAGS=$(CFLAGS)
 
-all: decompkernelcache.exe
+all: decompkernelcache.exe decompkernelcach-kc.exe
 
 # .asm.o:
 #	$(NASM) -o $@ -f macho64 $<
@@ -52,10 +52,14 @@ liblzvn.a: lzvndec.o lzvn_encode.o
 decompkernelcache.exe: decompkernelcache.o decompkernelcacheres.o WINSUPSRC/IOCFUnserialize.o liblzvn.a
 	$(CC) $(CFLAGS) -o $@ decompkernelcache.o decompkernelcacheres.o WINSUPSRC/IOCFUnserialize.o $(LIBS)
 
-clean:
-	rm -f *.o WINSUPSRC/IOCFUnserialize.o liblzvn.a decompkernelcache.exe
+decompkernelcache-kc.exe: decompkernelcache-kc.o decompkernelcacheres.o WINSUPSRC/IOCFUnserialize.o liblzvn.a
+	$(CC) $(CFLAGS) -o $@ decompkernelcache-kc.o decompkernelcacheres.o WINSUPSRC/IOCFUnserialize.o $(LIBS)
 
-install: decompkernelcache.exe lzvn.h liblzvn.a
+clean:
+	rm -f *.o WINSUPSRC/IOCFUnserialize.o liblzvn.a decompkernelcache.exe decompkernelcache-kc.exe
+
+install: decompkernelcache.exe decompkernelcache-kc.exe lzvn.h liblzvn.a
 	$(INSTALL) decompkernelcache.exe $(PREFIX)/bin
+	$(INSTALL) decompkernelcache-kc.exe $(PREFIX)/bin
 	$(INSTALL) liblzvn.a $(PREFIX)/lib
 	$(INSTALL) lzvn.h $(PREFIX)/include

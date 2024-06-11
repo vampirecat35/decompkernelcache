@@ -24,7 +24,7 @@ ARFLAGS=cru
 CFLAGS=-arch x86_64 -arch arm64 -Os -mmacosx-version-min=10.6
 ASFLAGS=$(CFLAGS)
 
-all: decompkernelcache
+all: decompkernelcache decompkernelcache-kc
 
 # .asm.o:
 #	$(NASM) -o $@ -f macho64 $<
@@ -50,10 +50,15 @@ decompkernelcache: decompkernelcache.o WINSUPSRC/IOCFUnserialize.o liblzvn.a
 	$(CC) $(CFLAGS) -o $@ decompkernelcache.o WINSUPSRC/IOCFUnserialize.o $(LIBS)
 	$(CODESIGN) -s "$(CSIDENT)" $@
 
+decompkernelcache-kc: decompkernelcache-kc.o WINSUPSRC/IOCFUnserialize.o liblzvn.a
+	$(CC) $(CFLAGS) -o $@ decompkernelcache-kc.o WINSUPSRC/IOCFUnserialize.o $(LIBS)
+	$(CODESIGN) -s "$(CSIDENT)" $@
+
 clean:
-	rm -f *.o WINSUPSRC/IOCFUnserialize.o liblzvn.a decompkernelcache
+	rm -f *.o WINSUPSRC/IOCFUnserialize.o liblzvn.a decompkernelcache decompkernelcache-kc
 
 install: decompkernelcache lzvn.h liblzvn.a
 	$(INSTALL) decompkernelcache $(PREFIX)/bin
+	$(INSTALL) decompkernelcache-kc $(PREFIX)/bin
 	$(INSTALL) liblzvn.a $(PREFIX)/lib
 	$(INSTALL) lzvn.h $(PREFIX)/include
