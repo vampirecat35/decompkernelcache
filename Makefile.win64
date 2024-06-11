@@ -21,7 +21,7 @@ ARFLAGS=cru
 CFLAGS=-Os
 ASFLAGS=$(CFLAGS)
 
-all: decompkernelcache.exe decompkernelcach-kc.exe
+all: decompkernelcache.exe decompkernelcache-kc.exe
 
 # .asm.o:
 #	$(NASM) -o $@ -f macho64 $<
