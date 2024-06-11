@@ -1445,7 +1445,7 @@ uint8_t saveKexts(unsigned char *aFileBuffer, const char *dir)
                                     for(j = 0; j < sgp->nsects; j++){
                                         if (base) spp->addr &= ~0xffffff8000000000;
                                         if (spp->addr>=offsetrm) spp->addr-=offsetrm;
-                                        if (spp->offset>=offsetr) spp->offset-=offsetr;
+                                        if (spp->offset>=offsetr) spp->offset-=(uint32_t)offsetr;
                                         //offset1=spp->addr+spp->size;
                                         spp = (struct section_64 *)((char *)spp +
                                                      sizeof(struct section_64));

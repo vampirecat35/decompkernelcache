@@ -1,0 +1,13 @@
+﻿  decompkernelcache-kc.c
+  lzvndec.c
+  lzvn_encode.c
+  IOCFUnserialize.c
+C:\Users\andyvand\Downloads\decompkernelcache\decompkernelcache-kc.c(1399,64): warning C4244: '=': conversion from 'uint64_t' to 'intptr_t', possible loss of data
+C:\Users\andyvand\Downloads\decompkernelcache\decompkernelcache-kc.c(1422,116): warning C4244: '-=': conversion from 'uint64_t' to 'uintptr_t', possible loss of data
+/IOCFUnserialize.c(368,7): warning C4273: 'malloc': inconsistent dll linkage
+/IOCFUnserialize.c(375,6): warning C4273: 'free': inconsistent dll linkage
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 72 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  decompkernelcache-kc.vcxproj -> C:\Users\andyvand\Downloads\decompkernelcache\VC2022\decompkernelcache\Release\decompkernelcache-kc.exe
