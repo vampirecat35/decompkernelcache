@@ -9,7 +9,9 @@
 //
 // 
 //
+#if !defined(NO_MANIFEST)
 IDI_MANIFEST		RT_MANIFEST             "rtmanifest.xml"
+#endif
 //
 1                       WEVT_TEMPLATE           "WEVT_EN_US.bin"
 //

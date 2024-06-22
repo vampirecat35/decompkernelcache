@@ -1,0 +1,5 @@
+﻿  Generating code
+  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+  All 71 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  decompkernelcache-kc.vcxproj -> C:\Users\andyvand\Downloads\decompkernelcache\VC2022\decompkernelcache\x64\Release\decompkernelcache-kc.exe
